@@ -1,0 +1,81 @@
+Package: ExpDesign2021
+Type: Package
+Title: A helper to make sure requirements are installed for ExpDesign2021
+Description: For the practical sessions in Experimental Design & Biostats 2021,
+             we rely upon a fair number of other packages. This small package 
+             makes sure they're installed, and provides a script in inst/extdata
+             which demonstrates how to make a package from a skeleton. That 
+             script was, in fact, used to create this package. The motivation 
+             for using tidy models and Rmarkdown output is summarized in 
+             \url{https://bookdown.org/yihui/rmarkdown/basics-examples.html#homework-assignments-on-rpubs}. Knitted documents can be published directly from 
+             Rstudio to \url{https://rpubs.com/}, so all that's left is to make
+             sure that dependencies for assignments are in place. This package
+             also includes a few convenience functions (phelp, lsos, etc.).
+Version: 0.1.0
+Date: 2021-09-20
+Authors@R: person("Triche", "Lab", role=c("aut", "cre"), email="trichelab@gmail.com")
+Author: Triche Lab [aut, cre]
+Maintainer: Triche Lab <trichelab@gmail.com>
+URL: https://github.com/VanAndelInstitute/ExpDesign2021
+BugReports: https://github.com/VanAndelInstitute/ExpDesign2021/issues
+License: GPLv3
+Depends:
+    R (>= 4.0.0),
+    BiocManager,
+    broom,
+    broom.mixed,
+    ComplexHeatmap,
+    corrr,
+    dials,
+    discrim,
+    downlit,
+    dplyr,
+    factoextra,
+    ggplot2,
+    ggforce,
+    glmnet,
+    googlesheets4,
+    infer,
+    IRanges,
+    ISLR,
+    ISLR2,
+    kernlab,
+    kknn,
+    klaR,
+    knitr,
+    MASS,
+    mclust,
+    modeldata,
+    paletteer,
+    parsnip,
+    patchwork,
+    proxy,
+    purrr,
+    randomForest,
+    readr,
+    recipes,
+    remotes,
+    rmarkdown,
+    Roxygen2,
+    rpart,
+    rpart.plot,
+    rsample,
+    scico,
+    sinaplot,
+    skeletor,
+    tibble,
+    tidymodels,
+    tidyr,
+    tidyverse,
+    tune, 
+    vip, 
+    workflows,
+    workflowsets,
+    xgboost,
+    yardstick
+Imports:
+Suggests:
+    covr,
+    testthat
+RoxygenNote: 7.1.2
+Roxygen: list(markdown = TRUE)

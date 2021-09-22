@@ -1,4 +1,13 @@
-# History files
+*.Rcheck/
+*.orig
+ExpDesign2021*.tar.gz
+.DS_Store
+Rd2.pdf
+assets/
+inst/doc/*.html
+*.log
+.Rproj.user
+*.Rproj
 .Rhistory
 .Rapp.history
 
@@ -10,12 +19,6 @@
 
 # Example code in package build process
 *-Ex.R
-
-# Output files from R CMD build
-/*.tar.gz
-
-# Output files from R CMD check
-/*.Rcheck/
 
 # RStudio files
 .Rproj.user/
@@ -34,6 +37,6 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
-
+ 
 # R Environment Variables
 .Renviron
