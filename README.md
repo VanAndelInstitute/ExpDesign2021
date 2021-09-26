@@ -24,6 +24,8 @@ If all goes well, you'll see something like this:
 
 [![installed](https://github.com/VanAndelInstitute/ExpDesign2021/raw/main/inst/extdata/InstallationResults.png)](https://github.com/VanAndelInstitute/ExpDesign2021)
 
+The first couple of lines are checking to make sure that the `remotes` and `BiocManager` packages are up to date. 
+They are not required, but if you have an older version of either package, it could be a problem, so we install the latest version to avoid this. 
 
 ## For developers
 
