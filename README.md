@@ -2,17 +2,28 @@
 
 [![Build Status](https://travis-ci.org/VanAndelInstitute/ExpDesign2021.png?branch=master)](https://travis-ci.org/VanAndelInstitute/ExpDesign2021)  [![codecov](https://codecov.io/gh/VanAndelInstitute/ExpDesign2021/branch/master/graph/badge.svg)](https://codecov.io/gh/VanAndelInstitute/ExpDesign2021)
 
-## How to use this package 
+## How to get started
+
+If you're using a Mac, you may need to install [Xquartz](https://www.xquartz.org/) first; do so before proceeding. It will end like this:
+
+[![xquartz](https://raw.githubusercontent.com/VanAndelInstitute/ExpDesign2021/main/inst/extdata/xquartz.png)](https://www.xquartz.org/)
+
+Then pull up Rstudio or (if you're a caveman like me) R, and do the following: 
 
 ```
+install.packages("remotes")
 install.packages("BiocManager")
 BiocManager::install("VanAndelInstitute/ExpDesign2021")
 ```
 
-The pre-release version of the package can be pulled from GitHub using the [devtools](https://github.com/hadley/devtools) package:
+If you're asked which CRAN mirror to use, I suggest number (1), `cloud.r-project.org`.
+If you have any issues with packages, you can try `install.packages("offending_package_name")` and see if it fixes the problem. 
+If that doesn't work, and you're on a Mac, you may have to install some software to compile source code; [more details here](https://mac.r-project.org/tools/).
+I strongly suggest that you avoid compiling your own packages unless you are writing packages yourself (even then, only if you have to).
+If all goes well, you'll see something like this: 
 
-    # install.packages("BiocManager")
-    BiocManager::install("VanAndelInstitute/ExpDesign2021")
+[![installed](https://github.com/VanAndelInstitute/ExpDesign2021/raw/main/inst/extdata/InstallationResults.png)](https://github.com/VanAndelInstitute/ExpDesign2021)
+
 
 ## For developers
 
