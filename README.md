@@ -17,10 +17,15 @@ BiocManager::install("VanAndelInstitute/ExpDesign2021")
 ```
 
 If you're asked which CRAN mirror to use, I suggest number (1), `cloud.r-project.org`.
+
 If `BiocManager::install()` asks you which packages to update, I suggest (2), `CRAN packages only`.
+
+[![packages](https://raw.githubusercontent.com/VanAndelInstitute/ExpDesign2021/main/inst/extdata/CRAN_packages_only.png)](https://github.com/VanAndelInstitute/ExpDesign2021)
+
 If you have further issues with packages, you can try `install.packages("offending_package_name")` and see if that fixes the problem. 
 If that doesn't work, and you're on a Mac, you may have to install some software to compile source code; [more details here](https://mac.r-project.org/tools/).
-I strongly suggest that you avoid compiling your own packages unless you are writing packages yourself (even then, only if you have to).
+I strongly suggest that you avoid compiling your own packages unless you are writing packages (and even then, only if you must).
+
 If all goes well, you'll see something like this: 
 
 [![installed](https://github.com/VanAndelInstitute/ExpDesign2021/raw/main/inst/extdata/InstallationResults.png)](https://github.com/VanAndelInstitute/ExpDesign2021)
