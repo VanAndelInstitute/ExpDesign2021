@@ -2,9 +2,11 @@
 
 S3method(print,data.frame)
 export(dtach)
+export(fetchAssignments)
 export(identical)
 export(lsos)
 export(phelp)
 export(reqInstall)
 import(IRanges)
+import(googlesheets4)
 import(tidytext)
