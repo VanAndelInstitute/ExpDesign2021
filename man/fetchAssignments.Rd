@@ -9,8 +9,12 @@ fetchAssignments(
     url = "https://docs.google.com/spreadsheets/d/1bJw_ad0PLQmLe4RvmRzsVnrOF-9Z9Xth9GTSdwO8B4M"
 )
 }
+\arguments{
+\item{url}{url to fetch, deauthed (default is assignments spreadsheet)}
+}
 \value{
-a tibble, via googlesheets4::read_sheet()
+\preformatted{ a tibble, via googlesheets4::read_sheet() 
+}
 }
 \description{
 fetch the Assignments spreadsheet for massaging and analysis
