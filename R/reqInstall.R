@@ -6,6 +6,8 @@
 #'
 #' @examples
 #' reqInstall("BiocManager") 
+#'
+#' @import tidytext 
 #' 
 #' @export
 reqInstall <- function(p) {
