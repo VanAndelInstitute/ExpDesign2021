@@ -3,7 +3,7 @@
   googlesheets4::gs4_deauth() 
   message("googlesheets4::gs4_deauth() called to reduce annoyances.")
 
-  reqInstall("tidytext") # test a recent dependency 
+  suppressWarnings(reqInstall("tidytext")) # test a recent dependency 
   message("ExpDesign2021 package and dependencies loaded.")
 
 }
