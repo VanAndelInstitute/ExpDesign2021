@@ -1,0 +1,178 @@
+---
+title: "Lecture 4 practical session"
+author: "Tim Triche"
+date: "September 27th, 2021"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Lecture 4}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+library(devtools)
+load_all("./")
+```
+
+# Installation
+Install the ExpDesign2021 package from github.
+
+```{r eval = FALSE, message = FALSE}
+#install.packages("remotes")
+#install.packages("BiocManager")
+#BiocManager::install("VanAndelInstitute/ExpDesign2021", build_vignettes=TRUE)
+
+library(ExpDesign2021)
+```
+
+# Introduction
+
+Some of this follows [the tidymodels intro](https://www.tidymodels.org/start/models/).  Some of it... doesn't. 
+
+```{r intro eval=TRUE}
+
+rm(anscombe) 
+library(datasets)
+
+library(broom) 
+glance(anscombe) 
+head(anscombe) 
+
+# tidy some data
+anscombe %>%
+  mutate(observation = seq_len(nrow(anscombe))) %>% 
+  gather(key, value, -observation) %>%
+  separate(key, c("variable", "set"), 1, convert = TRUE) %>%
+  mutate(set = c("I", "II", "III", "IV")[set]) %>%
+  spread(variable, value) -> anscombe_tidy 
+# note that I quite like to use -> due to logical flow
+
+# split into the quartet: 
+anscombe <- split(anscombe_tidy, anscombe_tidy$set)
+# this blows away the original; you won't miss it 
+
+
+# fit a linear model to each
+# again I prefer -> here 
+linear_reg() %>%
+  set_engine("lm") -> lm_mod 
+# later on we'll do this with glmnet for multinomial regression,
+# i.e. "which type of cells did this leukemia come from"
+# but for now, let's look at linear models 
+
+# Q: how to do this "tidily"?
+
+# A: 
+
+# ... 
+
+# And let's plot each. 
+# untidy
+par(mfrow=c(2,2)) 
+for (dataset in names(anscombe)) { 
+  with(anscombe[[dataset]], cor(x, y))
+  with(anscombe[[dataset]], plot(x, y, main=dataset, col=2, pch=20))
+  fit <- with(anscombe[[dataset]], lm(y ~ x + 0)) 
+  lines(x=anscombe[[dataset]][, "x"], y=fit$fitted.values)
+} 
+
+
+```
+So we've got some more exploration to do. 
+
+
+
+# Pulling down the Assignments spreadsheet 
+
+To avoid some annoyance, I wrapped the usual read_sheet and gs4_deauth 
+rigamarole in a function called `fetchAssignments`. 
+
+```{r assignments eval=TRUE}
+
+library(tidytext)
+library(tidymodels)
+library(broom.mixed) 
+
+assignments <- fetchAssignments() # tada 
+View(assignments)
+
+```
+
+
+# Mixed models
+
+Mixed models attempt to partition variance into `fixed` and `random` 
+components, such as a condition (fixed, mean difference) versus a measurement
+group (random differences).  This is handy when running replicates, 
+particularly if some are technical and some are biological, but there's also 
+the possibility of partially pooling some terms.  For now, let's just intro 
+some handlers for these types of models.  (These aren't really handled in 
+either EDfMB *or* ISLRv2, but they're incredibly useful in actual practice.) 
+
+```{r mixed eval=TRUE}
+
+library(lme4)
+
+# lmer == "linear mixed effects regression"
+# kind of an old-school example since parsnip doesn't like mixed models yet
+lmm1 <- with(sleepstudy, 
+             lmer(Reaction ~ Days + (Days | Subject)) 
+
+tidy(lmm1)
+
+# this is fairly traditional 
+tidy(lmm1, effects = "fixed")
+tidy(lmm1, effects = "fixed", conf.int=TRUE)
+tidy(lmm1, effects = "fixed", conf.int=TRUE, conf.method="profile")
+
+# this isn't
+tidy(lmm1, effects = "ran_coefs")
+tidy(lmm1, effects = "ran_vals", conf.int=TRUE)
+tidy(lmm1, effects = "ran_pars", conf.int=TRUE)
+
+```
+
+So, if you visit [the broom.mixed vignette](https://cran.r-project.org/web/packages/broom.mixed/vignettes/broom_mixed_intro.html), you'll find some code to make
+a plot of the estimates for various factors in a *different* regression. First, 
+adapt that code to the above sleep study. Next we'll start looking at the 
+assignments spreadsheet, plotting the data, and fitting models to that. 
+
+
+# The assignments spreadsheet
+
+Now we're back to what will eventually become project 1.  How about we plot 
+some of the columns of the data?
+
+```{r plots eval=TRUE}
+
+library(sinaplot)
+assignments <- fetchAssignments() # tada 
+
+# rename the columns for brevity 
+colnames(assignments) <- c("timestamp", "ID", "assignment", 
+                           "start", "end", "comments") 
+
+# add a column for "minutes" 
+library(lubridate)
+assignments %>% mutate(minutes = as.numeric(end - start)) -> assignments
+
+# drop the first two rows
+assignments <- assignments[3:nrow(assignments), ] 
+assignments$ID <- factor(assignments$ID)
+
+# plot the minutes taken grouped by ID, not super tidy 
+with(subset(assignments, minutes > 0), 
+     sinaplot(minutes, ID, col=2:7, pch=20))
+
+# only look at assignments which have > 1 entry
+assignments$assignment %>% table() %>% sort() %>% tail(9) %>% names() -> ok
+
+# plot the minutes taken grouped by assignment
+with(subset(assignments, assignment %in% ok & minutes > 0), 
+     sinaplot(minutes, assignment, col=2:7, pch=20))
+
+
+```
+
