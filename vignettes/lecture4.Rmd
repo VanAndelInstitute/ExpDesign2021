@@ -116,7 +116,7 @@ library(lme4)
 # lmer == "linear mixed effects regression"
 # kind of an old-school example since parsnip doesn't like mixed models yet
 lmm1 <- with(sleepstudy, 
-             lmer(Reaction ~ Days + (Days | Subject)) 
+             lmer(Reaction ~ Days + (Days | Subject)))
 
 tidy(lmm1)
 
