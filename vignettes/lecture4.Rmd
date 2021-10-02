@@ -1,5 +1,5 @@
 ---
-title: "Lecture 4 practical session"
+title: "Lecture 4/5 practical sessions"
 author: "Tim Triche"
 date: "September 27th, 2021"
 output: rmarkdown::html_vignette
@@ -33,16 +33,14 @@ Some of this follows [the tidymodels intro](https://www.tidymodels.org/start/mod
 
 ```{r intro eval=TRUE}
 
-rm(anscombe) 
 library(datasets)
-
 library(broom) 
 glance(anscombe) 
 head(anscombe) 
 
 # tidy some data
-anscombe %>%
-  mutate(observation = seq_len(nrow(anscombe))) %>% 
+datasets::anscombe %>%
+  mutate(observation = seq_len(nrow(datasets::anscombe))) %>% 
   gather(key, value, -observation) %>%
   separate(key, c("variable", "set"), 1, convert = TRUE) %>%
   mutate(set = c("I", "II", "III", "IV")[set]) %>%
