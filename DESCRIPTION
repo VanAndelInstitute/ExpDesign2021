@@ -33,7 +33,7 @@ Depends:
     MASS,
     parsnip,
     patchwork,
-    polychrome,
+    Polychrome,
     sinaplot,
     tidymodels, 
     tidyverse
