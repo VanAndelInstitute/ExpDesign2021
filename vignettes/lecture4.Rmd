@@ -31,7 +31,7 @@ library(ExpDesign2021)
 
 Some of this follows [the tidymodels intro](https://www.tidymodels.org/start/models/).  Some of it... doesn't. 
 
-```{r intro eval=TRUE}
+```{r eval=TRUE}
 
 library(datasets)
 library(broom) 
@@ -87,7 +87,7 @@ So we've got some more exploration to do.
 To avoid some annoyance, I wrapped the usual read_sheet and gs4_deauth 
 rigamarole in a function called `fetchAssignments`. 
 
-```{r assignments eval=TRUE}
+```{r eval=TRUE}
 
 library(tidytext)
 library(tidymodels)
@@ -109,7 +109,7 @@ the possibility of partially pooling some terms.  For now, let's just intro
 some handlers for these types of models.  (These aren't really handled in 
 either EDfMB *or* ISLRv2, but they're incredibly useful in actual practice.) 
 
-```{r mixed eval=TRUE}
+```{r eval=TRUE}
 
 library(lme4)
 
@@ -143,7 +143,7 @@ assignments spreadsheet, plotting the data, and fitting models to that.
 Now we're back to what will eventually become project 1.  How about we plot 
 some of the columns of the data?
 
-```{r plots eval=TRUE}
+```{r eval=TRUE}
 
 library(sinaplot)
 assignments <- fetchAssignments() # tada 
