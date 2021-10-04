@@ -11,8 +11,8 @@ Description: For the practical sessions in Experimental Design & Biostats 2021,
              Rstudio to \url{https://rpubs.com/}, so all that's left is to make
              sure that dependencies for assignments are in place. This package
              also includes a few convenience functions (phelp, lsos, etc.).
-Version: 0.10.02
-Date: 2021-10-02
+Version: 0.10.03
+Date: 2021-10-03
 Authors@R: person("Triche", "Lab", role=c("aut", "cre"), email="trichelab@gmail.com")
 Author: Triche Lab [aut, cre]
 Maintainer: Triche Lab <trichelab@gmail.com>
@@ -21,32 +21,27 @@ BugReports: https://github.com/VanAndelInstitute/ExpDesign2021/issues
 License: GPLv3
 Depends:
     R (>= 4.0.0),
+    googlesheets4,
+    sinaplot,
+    tidymodels
+Imports:
     BiocManager,
     broom,
     broom.mixed,
-    datasets,
-    ggforce,
-    ggplot2,
-    ggthemes,
-    googlesheets4,
-    ISLR2,
-    MASS,
-    parsnip,
-    patchwork,
-    Polychrome,
-    sinaplot,
-    tidymodels, 
-    tidyverse
-Imports:
     corrr,
+    datasets,
     dials,
     discrim,
     downlit,
     dplyr,
     factoextra,
+    ggforce,
+    ggplot2,
+    ggthemes,
     glmnet,
     infer,
     ISLR,
+    ISLR2,
     kernlab,
     kknn,
     klaR,
@@ -55,6 +50,9 @@ Imports:
     mclust,
     modeldata,
     paletteer,
+    parsnip,
+    patchwork,
+    Polychrome,
     proxy,
     purrr,
     randomForest,
@@ -71,6 +69,7 @@ Imports:
     tibble,
     tidyr,
     tidytext,
+    tidyverse,
     tune, 
     vip, 
     workflows,
@@ -81,4 +80,5 @@ Suggests:
     covr,
     testthat
 RoxygenNote: 7.1.2
+VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
