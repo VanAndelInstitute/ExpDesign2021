@@ -2,7 +2,9 @@
 title: "Project 1 practical sessions"
 author: "Tim Triche"
 date: "September 27th, 2021"
-output: rmarkdown::github_document
+output: 
+  html_document:
+    keep_md: true
 vignette: >
   %\VignetteIndexEntry{Project1}
   %\VignetteEngine{knitr::rmarkdown}
