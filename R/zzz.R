@@ -1,5 +1,3 @@
-#' @rdname ExpDesign2021 
-#' 
 #' A package for the 2021 edition of Experimental Design and Biostatistics.
 #'
 #' @examples 
@@ -13,6 +11,7 @@
 #' # list object sizes (lsos) and pipe the output into head (default: 6 lines)
 #' lsos() %>% head 
 #' 
+#' @rdname ExpDesign2021 
 .onAttach <- function (lib, pkgname="ExpDesign2021") {
 
   tidymodels_prefer(quiet=FALSE)

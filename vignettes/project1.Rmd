@@ -23,81 +23,120 @@ Install the ExpDesign2021 package from github.
 #install.packages("remotes")
 #install.packages("BiocManager")
 #BiocManager::install("VanAndelInstitute/ExpDesign2021", build_vignettes=TRUE)
-
-library(ExpDesign2021)
 ```
 
 # Introduction
 
-Some of this follows [the tidymodels intro](https://www.tidymodels.org/start/models/).  Some of it... doesn't. 
+We'll follow [the tidymodels intro](https://www.tidymodels.org/start/models/), 
+but we'll concentrate on the data you (plural) have been generating so far. 
+
+To avoid some annoyance, I wrapped the usual read_sheet and gs4_deauth 
+rigamarole in a function called `fetchAssignments` or, explicitly, 
+ExpDesign2021::fetchAssignments. (If you want to be super clear about where 
+a function should come from, package::function(arguments) is the way to go.)
+Let's start by loading the data on the first few weeks' assignments.
 
 ```{r eval=TRUE}
 
-library(datasets)
-library(broom) 
-glance(anscombe) 
-head(anscombe) 
+# this package
+library(ExpDesign2021)
 
-# tidy some data
-datasets::anscombe %>%
-  mutate(observation = seq_len(nrow(datasets::anscombe))) %>% 
-  gather(key, value, -observation) %>%
-  separate(key, c("variable", "set"), 1, convert = TRUE) %>%
-  mutate(set = c("I", "II", "III", "IV")[set]) %>%
-  spread(variable, value) -> anscombe_tidy 
-# note that I quite like to use -> due to logical flow
+# curious what's in a library?
+# try `phelp(library)`, e.g. `phelp(ggthemes)`
+# which is short for help(package="ggthemes") 
 
-# split into the quartet: 
-anscombe <- split(anscombe_tidy, anscombe_tidy$set)
-# this blows away the original; you won't miss it 
+# grab some data:
+assignments <- fetchAssignments() # tada 
+# or, equivalently, 
+# fetchAssignments() -> assignments 
 
+# verify we got it: 
+View(head(assignments)) # the first few rows
 
-# fit a linear model to each
-# again I prefer -> here 
-linear_reg() %>%
-  set_engine("lm") -> lm_mod 
-# later on we'll do this with glmnet for multinomial regression,
-# i.e. "which type of cells did this leukemia come from"
-# but for now, let's look at linear models 
+# rename the columns for brevity in the following code:
+columnNames <- colnames(assignments) # we will re-use this later 
+names(columnNames) <- c("timestamp", "ID", "assignment", 
+                        "start", "end", "comments") 
 
-# Q: how to do this "tidily"?
+# data %>% ("pipe") select columns %>% ("pipe") show the first two lines:
+assignments %>% select(c("timestamp", "comments")) %>% head(2) 
+# # A tibble: 2 × 2
+#   timestamp           comments
+#   <dttm>              <chr>
+# 1 2021-08-30 10:34:53 I am not actually a student
+# 2 2021-09-01 18:39:09 I will likely need to go back and re-read some of these
 
-# A: 
+# The first row comment declares it is from a nonstudent, so drop it. 
+# As it turns out, all of the non-bogus entries start the next day. 
+# We can take advantage of this to select entries by date on the way in:
+library(lubridate)
 
-# ... 
+# remember the vector of names we constructed above?
+# Now we will use it "on the fly" to rename columns, 
+# en route to filtering out bogus entries,
+# adding a column for minutes spent, 
+# filtering out negative minutes (!), 
+# and assigning the result to `assignments`.
+fetchAssignments() %>% 
+  rename(columnNames) %>% 
+  filter(timestamp > "2021-08-30") %>% 
+  mutate(minutes = end - start) %>%
+  filter(minutes > 0) -> assignments 
 
-# And let's plot each. 
-# untidy
-par(mfrow=c(2,2)) 
-for (dataset in names(anscombe)) { 
-  with(anscombe[[dataset]], cor(x, y))
-  with(anscombe[[dataset]], plot(x, y, main=dataset, col=2, pch=20))
-  fit <- with(anscombe[[dataset]], lm(y ~ x + 0)) 
-  lines(x=anscombe[[dataset]][, "x"], y=fit$fitted.values)
-} 
-
+# How many entries remain? 
+dim(assignments) 
+# [1] 96  7
 
 ```
-So we've got some more exploration to do. 
+
+Let's do a bit of exploratory analysis on the tidied assignment data. 
 
 
+```{r eval=TRUE}
 
-# Pulling down the Assignments spreadsheet 
+# basic plots
+library(ggplot2)
 
-To avoid some annoyance, I wrapped the usual read_sheet and gs4_deauth 
-rigamarole in a function called `fetchAssignments`. 
+# geom_sina
+library(ggforce)
+
+# minimalist themes
+library(ggthemes)
+
+# minimalist:
+assignments %>% 
+  ggplot(aes(x = ID, 
+             y = minutes, 
+             color = ID)) + 
+    geom_sina(show.legend = FALSE) + 
+    scale_x_discrete(guide = guide_axis(angle = 60)) + 
+    theme_tufte(base_size = 12, 
+                base_family = "sans serif") + 
+    theme(axis.title.x = element_blank()) + 
+    ggtitle("Time spent on assignments by ID") 
+
+```
+
+Let's do a little bit of modeling on the data.
+It turns out that both the comments and the assignment names could use work. 
+Let's use some natural language processing tools (i.e. big hammers) to fix that.
 
 ```{r eval=TRUE}
 
 library(tidytext)
-library(tidymodels)
-library(broom.mixed) 
 
-assignments <- fetchAssignments() # tada 
-View(assignments)
 
 ```
 
+That's better.  Now let's plot things again and start fitting some models. 
+
+
+```{r eval=TRUE}
+
+library(tidymodels)
+library(broom.mixed) 
+
+```
 
 # Mixed models
 
