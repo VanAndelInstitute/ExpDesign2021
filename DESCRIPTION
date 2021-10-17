@@ -32,7 +32,6 @@ Imports:
     corrr,
     datasets,
     dials,
-    discrim,
     downlit,
     dplyr,
     factoextra,

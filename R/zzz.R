@@ -17,6 +17,7 @@
   tidymodels_prefer(quiet=FALSE)
   conflicted::conflict_prefer("filter", "dplyr")
   conflicted::conflict_prefer("mutate", "dplyr")
+  conflicted::conflict_prefer("select", "dplyr")
   googlesheets4::gs4_deauth() 
   googlesheets4::gs4_user()
 
