@@ -24,6 +24,8 @@ Depends:
     conflicted,
     ggforce,
     googlesheets4,
+    moderndive,
+    tidyverse,
     tidymodels
 Imports:
     BiocManager,

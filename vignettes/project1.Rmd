@@ -1,5 +1,5 @@
 ---
-title: "Project 1 practical sessions"
+title: "Practical sessions part 1"
 author: "Tim Triche"
 date: "September 27th, 2021"
 output: 
@@ -30,8 +30,12 @@ Install the ExpDesign2021 package from github.
 
 # Introduction
 
-We'll follow [the tidymodels intro](https://www.tidymodels.org/start/models/), 
-but we'll concentrate on the data you (plural) have been generating so far. 
+The recommended starting point for modeling things in the tidyverse is through
+the [*tidymodels*](https://tidymodels.org/start/) package, and the tidymodels
+folks suggest [*A ModernDive into R and the Tidyverse*](https://moderndive.com/) for beginners. So let's use [Chapter 5: Basic Regression](https://moderndive.com/5-regression.html) as a roadmap. We will also try and make this a bit easier.
+
+
+# The assignments spreadsheet
 
 To avoid some annoyance, I wrapped the usual read_sheet and gs4_deauth 
 rigamarole in a function called `fetchAssignments` or, explicitly, 
@@ -112,6 +116,17 @@ assignments %>%                                        # feed data to...
     theme(axis.title.x = element_blank()) +            # blank the axis title
     ggtitle("Time spent on assignments by ID")         # add a plot title  
 
+# same but in hours:
+assignments %>%               
+  mutate(hours = as.numeric(as.duration(minutes), "hours")) %>% # get hours 
+  ggplot(aes(x = ID, y = hours, color = ID)) +         # a plot with aesthetics
+    geom_sina(show.legend = FALSE) +                   # rendered as a sinaplot
+    scale_x_discrete(guide = guide_axis(angle = 60)) + # with IDs at 60' angle
+    theme_tufte(base_size = 12,                        # tufte theme, 12pt font
+                base_family = "sans serif") +          # with sans serif text
+    theme(axis.title.x = element_blank()) +            # blank the axis title
+    ggtitle("Hours spent on assignments by ID")        # add a plot title  
+
 ```
 
 Let's do a little bit of modeling on the data. First, let's group assignments.
@@ -145,7 +160,7 @@ assignments %>%                                          # feed data to...
 assignment_comments %>%                   # feed the tokenized data to..
   filter(!is.na(ctext)) %>%               # only look at non-NA comments
   select(assid, atype, ctext, comid) %>%  # only look at a few columns 
-  head %>%                                # grab the first few lines and
+  head(10) %>%                            # grab the first few lines and
   kable                                   # make a table out of them 
 
 # what words seem to be particularly common?
@@ -153,13 +168,35 @@ assignment_comments %>%               # feed the tokenized data to...
   count(atype, ctext, sort = TRUE) -> # count comment words by atype, assign to
     atype_ctext_counts
 
-# see https://www.tidytextmining.com/tfidf.html for some more ideas here.
+atype_ctext_counts %>% head %>% kable
 
 ```
 
-That's better.  Now let's plot things again.
+# Some further questions (not necessary to answer with code just yet)
+
+This is a first pass at restructuring a couple of free-text fields; you could 
+read [the tidytext chapter on term frequency - inverse document frequency](https://www.tidytextmining.com/tfidf.html) for some additional ideas if you like. 
+
+* One thought: if you look at the comments quantitatively, and don't assume
+  that NAs are wholly uninformative, is there any pattern to the results? 
+
+* Another thought: can we do better in terms of extracting assignment types?
+
+In any event, digesting the text of these fields made it a bit easier to group.
+Now let's plot things again.
 
 ```{r eval=TRUE}
+
+# default sinaplot
+assignments %>%                                        # feed data to...
+  mutate(assid = tolower(assignment)) %>%              # create a new column
+  mutate(atype = assignmentType(assid)) %>%            # group assignments 
+  ggplot(aes(x = atype, y = minutes, color = ID)) +    # a plot with aesthetics
+    geom_sina(maxwidth=0.1, show.legend = FALSE) +     # rendered as a sinaplot
+    xlab("Assignment type") +                          # grouped by type
+    theme_tufte(base_size = 12,                        # tufte theme, 12pt font
+                base_family = "sans serif") +          # with sans serif text
+    ggtitle("Time spent on assignments by type")         # add a plot title  
 
 # a new sinaplot
 assignments %>%                                        # feed data to...
@@ -173,14 +210,25 @@ assignments %>%                                        # feed data to...
                 base_family = "sans serif") +          # with sans serif text
     ggtitle("Time spent on assignments by type")         # add a plot title  
 
+# same but in hours
+assignments %>%                                        # feed data to...
+  mutate(assid = tolower(assignment)) %>%              # create a new column
+  mutate(atype = assignmentType(assid)) %>%            # group assignments 
+  mutate(hours = as.numeric(as.duration(minutes), "hours")) %>% # get hours 
+  ggplot(aes(x = atype, y = hours, color = ID)) +      # a plot with aesthetics
+    geom_sina(maxwidth=0.1, show.legend = FALSE) +     # rendered as a sinaplot
+    xlab("Assignment type") +                          # grouped by type
+    coord_flip() +                                     # but left-to-right 
+    theme_tufte(base_size = 12,                        # tufte theme, 12pt font
+                base_family = "sans serif") +          # with sans serif text
+    ggtitle("Hours spent on assignments by type")         # add a plot title  
 
 ```
 
 # Faceting and whatnot
 
-ggplot2 is useful in that it will happily split up plots into facets, among 
-other handy features.  Here's one example: 
-
+ggplot2 is useful in that it will happily split up plots into facets (sub-plots)
+among its many other handy features.  Here's one example: 
 
 ```{r eval=TRUE}
 
@@ -188,18 +236,90 @@ other handy features.  Here's one example:
 assignments %>%                                        # feed data to...
   mutate(assid = tolower(assignment)) %>%              # create a new column
   mutate(atype = assignmentType(assid)) %>%            # group assignments 
-  ggplot(aes(x = atype, y = minutes, color = ID)) +    # a plot with aesthetics
+  mutate(hours = as.numeric(as.duration(minutes), "hours")) %>% # get hours 
+  ggplot(aes(x = atype, y = hours, color = ID)) +      # a plot with aesthetics
     geom_boxplot(show.legend = FALSE) +                # with an added boxplot
     geom_point(show.legend = FALSE) +                  # and all the data points
     xlab("Assignment type") +                          # grouped by type
     facet_wrap( ~ ID) +                                # split by ID
     coord_flip() +                                     # but left-to-right 
-    theme_minimal()
+    theme_minimal()                                    # and less minimal
 
 ```
 
+If you fitted a linear regression to some of the data at some point, 
+you probably recognize this formula notation.  In R, it is ubiquitous:
 
-# Mixed models
+    y ~ x1 + x2 + x1:x2 + ... 
+
+```{r eval=TRUE}
+
+# setup
+assignments %>%                              # feed data to...
+  filter(minutes > 0) %>%                    # only keep rows with minutes > 0
+  mutate(assid = tolower(assignment)) %>%    # create a new column `assid`
+  mutate(atype = assignmentType(assid)) %>%  # create `atype` w/assignmentType
+  mutate(hours = as.numeric(as.duration(minutes), "hours")) -> # add hours 
+    hours_by_type                            # put the result here
+ 
+
+# quick look
+glimpse(hours_by_type)
+
+# should we transform these?
+hours_by_type %>%
+  ggplot(aes(x = atype, y = hours, color = ID)) +    # a plot with aesthetics
+    geom_sina(show.legend = FALSE) +                   # and a beeswarm style
+    xlab("Assignment type") +                          # grouped by type
+    theme_minimal() +                                  # save plotspace
+    ggtitle("raw times") ->                            # add a title
+      plot_raw                                         # put result in plot_raw 
+
+hours_by_type %>%
+  mutate(loghours = log(hours)) %>%                    # add a logged column
+  ggplot(aes(x = atype, y = loghours, color = ID)) +   # a plot with aesthetics
+    geom_sina(show.legend = FALSE) +                   # and a beeswarm style
+    xlab("Assignment type") +                          # grouped by type
+    theme_minimal() +                                  # save plotspace
+    ggtitle("log10 scaled") ->                         # add a title 
+      plot_log10                                       # put into plot_log10 
+
+library(patchwork)                                     # for easier arrangement
+plot_raw + plot_log10                                  # this is via patchwork
+# personally I'm OK with not transforming these 
+
+```
+
+The recommended starting point for modeling things in the tidyverse is through
+the [*tidymodels*](https://tidymodels.org/start/) package, and the tidymodels
+folks suggest [*A ModernDive into R and the Tidyverse*](https://moderndive.com/) for beginners. So let's use [Chapter 5: Basic Regression](https://moderndive.com/5-regression.html) as a roadmap.
+
+```{r eval=TRUE}
+
+library(moderndive) # for get_regression_table
+
+# traditional linear model fit: y ~ x1 + x2 + ... 
+fit0 <- lm(hours ~ atype, data = hours_by_type) # regress on atype only
+get_regression_table(fit0) %>% kable
+
+fit1 <- lm(hours ~ atype + ID, data = hours_by_type) # regress on atype + ID
+get_regression_table(fit1) %>% kable
+anova(fit0, fit1) # does it fit any better?
+
+fit2 <- lm(hours ~ atype * ID, data = hours_by_type) # regress on interaction
+get_regression_table(fit2) %>% kable
+anova(fit0, fit2) # does this fit any better?
+
+# compare:
+anova(fit1, fit2) # do either of these matter?
+
+```
+
+At this point, for a *fixed effects* regression, all that seems to matter is 
+the type of assignment (in terms of predicting the time taken to complete it).
+What if we wanted to try and carve up the random effects (variance components)?
+
+# Mixed models (optional)
 
 Mixed models attempt to partition variance into `fixed` and `random` 
 components, such as a condition (fixed, mean difference) versus a measurement
@@ -217,62 +337,74 @@ library(lme4)
 
 # lmer == "linear mixed effects regression"
 # kind of an old-school example since parsnip doesn't like mixed models yet
-lmm1 <- with(sleepstudy, 
-             lmer(Reaction ~ Days + (Days | Subject)))
+lmm0 <- lmer(hours ~ atype + (1 | ID), data = hours_by_type) # note syntax
+lmm1 <- lmer(hours ~ atype + (atype | ID), data = hours_by_type) # note syntax
 
+tidy(lmm0)
 tidy(lmm1)
+anova(lmm0, lmm1) # lmm0 is "good enough", it seems
 
 # this is fairly traditional 
-tidy(lmm1, effects = "fixed")
-tidy(lmm1, effects = "fixed", conf.int=TRUE)
-tidy(lmm1, effects = "fixed", conf.int=TRUE, conf.method="profile")
+tidy(lmm0, effects = "fixed")
+tidy(lmm0, effects = "fixed", conf.int=TRUE)
+tidy(lmm0, effects = "fixed", conf.int=TRUE, conf.method="profile")
 
 # this isn't
-tidy(lmm1, effects = "ran_coefs")
-tidy(lmm1, effects = "ran_vals", conf.int=TRUE)
-tidy(lmm1, effects = "ran_pars", conf.int=TRUE)
+tidy(lmm0, effects = "ran_coefs")
+tidy(lmm0, effects = "ran_vals", conf.int=TRUE)
+tidy(lmm0, effects = "ran_pars", conf.int=TRUE)
 
 ```
 
 So, if you visit [the broom.mixed vignette](https://cran.r-project.org/web/packages/broom.mixed/vignettes/broom_mixed_intro.html), you'll find some code to make
-a plot of the estimates for various factors in a *different* regression. First, 
-adapt that code to the above sleep study. Next we'll start looking at the 
-assignments spreadsheet, plotting the data, and fitting models to that. 
+a plot of the estimates for various factors in a *different* regression. 
 
 
-# The assignments spreadsheet
+# Fitting existing data to sample from 
 
-Now we're back to what will eventually become project 1.  How about we plot 
-some of the columns of the data?
+We have something that looks somewhat interesting within the lab exercises. 
+Suppose we treat the observations as what they look like (a mixture) and try 
+to determine how that fits. Note that we fit a mixture model below, which 
+isn't directly related to mixed models. I didn't come up with the names...
 
 ```{r eval=TRUE}
 
-library(sinaplot)
-assignments <- fetchAssignments() # tada 
+library(mclust) # mixture model clustering, incredibly handy package
 
-# rename the columns for brevity 
-colnames(assignments) <- c("timestamp", "ID", "assignment", 
-                           "start", "end", "comments") 
+# fit 2 components
+hours_by_type %>% 
+  filter(atype == "lab") %>% # fit a mixture to just the lab assignments 
+  select("hours") %>%        # use the hours column we set up earlier 
+  Mclust(G=1:2) ->           # fit a mixture with either 1 or 2 components 
+    mfit0                    # save the results for plotting
 
-# add a column for "minutes" 
-library(lubridate)
-assignments %>% mutate(minutes = as.numeric(end - start)) -> assignments
+plot(mfit0, "classification") 
+plot(mfit0, "density") 
 
-# drop the first two rows
-assignments <- assignments[3:nrow(assignments), ] 
-assignments$ID <- factor(assignments$ID)
+# free to fit 1:10 parts
+hours_by_type %>% 
+  filter(atype == "lab") %>% # fit a mixture to just the lab assignments 
+  select("hours") %>%        # use the hours column we set up earlier 
+  Mclust() ->                # fit a mixture and the number of components in it 
+    mfit1                    # save the results for plotting
 
-# plot the minutes taken grouped by ID, not super tidy 
-with(subset(assignments, minutes > 0), 
-     sinaplot(minutes, ID, col=2:7, pch=20))
+plot(mfit1, "classification") 
+plot(mfit1, "density") 
 
-# only look at assignments which have > 1 entry
-assignments$assignment %>% table() %>% sort() %>% tail(9) %>% names() -> ok
+# this seems more reasonable
+show(mfit1$parameters) 
+# pro == proportions of observations in each group 
+# mean == means of each component (group) 
+# variance$sigmasq == variance of each component (group) 
 
-# plot the minutes taken grouped by assignment
-with(subset(assignments, assignment %in% ok & minutes > 0), 
-     sinaplot(minutes, assignment, col=2:7, pch=20))
-
+params <- with(mfit1$parameters,
+               tibble(proportion=pro,
+                      mean=mean,
+                      sd=sqrt(variance$sigmasq)))
+params %>% kable 
 
 ```
 
+This puts us in a position to simulate additional draws from data generated by
+similar processes to those observed in the assignment data. (Question: is that 
+always a good thing? What could interfere with this approach to power/design?)
