@@ -19,6 +19,7 @@ load_all("./")
 ```
 
 # Installation
+
 Install the ExpDesign2021 package from github.
 
 ```{r eval = FALSE, message = FALSE}
@@ -36,109 +37,167 @@ To avoid some annoyance, I wrapped the usual read_sheet and gs4_deauth
 rigamarole in a function called `fetchAssignments` or, explicitly, 
 ExpDesign2021::fetchAssignments. (If you want to be super clear about where 
 a function should come from, package::function(arguments) is the way to go.)
-Let's start by loading the data on the first few weeks' assignments.
+Let's start by loading data from the first few weeks' assignments.
 
 ```{r eval=TRUE}
 
 # this package
 library(ExpDesign2021)
 
-# curious what's in a library?
-# try `phelp(library)`, e.g. `phelp(ggthemes)`
-# which is short for help(package="ggthemes") 
-
-# grab some data:
-assignments <- fetchAssignments() # tada 
-# or, equivalently, 
+# grab some data to verify it works 
+assignments <- fetchAssignments()
+# note that this is equivalent to:
 # fetchAssignments() -> assignments 
 
 # verify we got it: 
-View(head(assignments)) # the first few rows
+kable(head(assignments)) # the first few rows
+# you can also echo the result of assigning a variable:
+# (fetchAssignments() -> assignments) # try it if you like
 
 # rename the columns for brevity in the following code:
-columnNames <- colnames(assignments) # we will re-use this later 
-names(columnNames) <- c("timestamp", "ID", "assignment", 
-                        "start", "end", "comments") 
+columnNames <- colnames(assignments)           # we will re-use this later; 
+names(columnNames) <- c("timestamp", "ID",     # these will be the new names
+                        "assignment", "start", 
+                        "end", "comments")
 
-# data %>% ("pipe") select columns %>% ("pipe") show the first two lines:
-assignments %>% select(c("timestamp", "comments")) %>% head(2) 
-# # A tibble: 2 × 2
-#   timestamp           comments
-#   <dttm>              <chr>
-# 1 2021-08-30 10:34:53 I am not actually a student
-# 2 2021-09-01 18:39:09 I will likely need to go back and re-read some of these
+# what's it look like now? Mostly so we can see what we're doing.
+tibble(oldName=columnNames, newName=names(columnNames)) %>% kable
 
-# The first row comment declares it is from a nonstudent, so drop it. 
-# As it turns out, all of the non-bogus entries start the next day. 
-# We can take advantage of this to select entries by date on the way in:
-library(lubridate)
+# now make this tidier:
+fetchAssignments() %>%                         # get data, then 
+  rename(columnNames) %>%                      # rename columns, then 
+  select(c("timestamp", "ID", "comments")) %>% # select columns, then 
+  head(2) %>%                                  # get the first two lines, then 
+  kable                                        # make a table out of them. 
+```
 
-# remember the vector of names we constructed above?
-# Now we will use it "on the fly" to rename columns, 
-# en route to filtering out bogus entries,
-# adding a column for minutes spent, 
-# filtering out negative minutes (!), 
-# and assigning the result to `assignments`.
-fetchAssignments() %>% 
-  rename(columnNames) %>% 
-  filter(timestamp > "2021-08-30") %>% 
-  mutate(minutes = end - start) %>%
-  filter(minutes > 0) -> assignments 
+FooBarBazQux is the userID I (tim) chose. I'm not a student, so out it goes.
+Let's also add a column for time taken, and filter based on that.
+
+```{r eval=TRUE}
+library(lubridate)                             # for date handling
+
+fetchAssignments() %>%                         # get data, then 
+  rename(columnNames) %>%                      # rename columns, then 
+  filter(ID != "FooBarBazQux") %>%             # exclude my entry, then  
+  mutate(minutes = end - start) %>%            # add a column `minutes`, then
+  filter(minutes > 0) ->                       # drop negative times, then
+    assignments                                # put the result in `assignments`
 
 # How many entries remain? 
-dim(assignments) 
-# [1] 96  7
+assignments %>% dim 
+# [1] 95  7
 
 ```
+
+# Exploration
 
 Let's do a bit of exploratory analysis on the tidied assignment data. 
-
+Unless you are trying to hide data, a beeswarm is usually a good default.
+(Tip: statisticians and statistical reviewers *will* pounce on boxplots.)
 
 ```{r eval=TRUE}
 
-# basic plots
-library(ggplot2)
+library(ggplot2)  # ggplot
+library(ggforce)  # geom_sina
+library(ggthemes) # theme_tufte
 
-# geom_sina
-library(ggforce)
-
-# minimalist themes
-library(ggthemes)
-
-# minimalist:
-assignments %>% 
-  ggplot(aes(x = ID, 
-             y = minutes, 
-             color = ID)) + 
-    geom_sina(show.legend = FALSE) + 
-    scale_x_discrete(guide = guide_axis(angle = 60)) + 
-    theme_tufte(base_size = 12, 
-                base_family = "sans serif") + 
-    theme(axis.title.x = element_blank()) + 
-    ggtitle("Time spent on assignments by ID") 
+# minimalist sinaplot (beeswarm):
+assignments %>%                                        # feed data to...
+  ggplot(aes(x = ID, y = minutes, color = ID)) +       # a plot with aesthetics
+    geom_sina(show.legend = FALSE) +                   # rendered as a sinaplot
+    scale_x_discrete(guide = guide_axis(angle = 60)) + # with IDs at 60' angle
+    theme_tufte(base_size = 12,                        # tufte theme, 12pt font
+                base_family = "sans serif") +          # with sans serif text
+    theme(axis.title.x = element_blank()) +            # blank the axis title
+    ggtitle("Time spent on assignments by ID")         # add a plot title  
 
 ```
 
-Let's do a little bit of modeling on the data.
-It turns out that both the comments and the assignment names could use work. 
-Let's use some natural language processing tools (i.e. big hammers) to fix that.
+Let's do a little bit of modeling on the data. First, let's group assignments.
+(It turns out that both the comments and the assignment names can use some work)
+Let's see if we can extract some rhyme or reason from the words making up these.
+(For more on this topic, you can visit the [tidy text mining book site](https://www.tidytextmining.com/tidytext.html).)
 
 ```{r eval=TRUE}
 
+# a quick helper function: 
+assignmentType <- function(x) {
+  # grepl tests for a pattern and returns TRUE or FALSE  
+  # ifelse operates as ifelse(condition, ifTRUE, ifFALSE)
+  # here we nest a second ifelse into the first to mop up
+  ifelse(grepl("(git|management|studio|lab)", x), 
+         "lab", ifelse(grepl("(islr|statistical|modeling)", x), 
+                       "ISLRv2", "EDfB"))
+}
+
+# now tokenize by type:
 library(tidytext)
+assignments %>%                                          # feed data to... 
+  mutate(assid = tolower(assignment)) %>%                # create a new column
+  mutate(comid = tolower(comments)) %>%                  # create a new column
+  mutate(atype = assignmentType(assid)) %>%              # group assignments 
+  unnest_tokens(input = comments, output = ctext) %>%    # put words in `ctext`
+  select(ID, assid, atype, comid, ctext, minutes) ->     # select a few columns 
+    assignment_comments                                  # assign the results
+
+# what has this done for us? Let's look:
+assignment_comments %>%                   # feed the tokenized data to..
+  filter(!is.na(ctext)) %>%               # only look at non-NA comments
+  select(assid, atype, ctext, comid) %>%  # only look at a few columns 
+  head %>%                                # grab the first few lines and
+  kable                                   # make a table out of them 
+
+# what words seem to be particularly common?
+assignment_comments %>%               # feed the tokenized data to...
+  count(atype, ctext, sort = TRUE) -> # count comment words by atype, assign to
+    atype_ctext_counts
+
+# see https://www.tidytextmining.com/tfidf.html for some more ideas here.
+
+```
+
+That's better.  Now let's plot things again.
+
+```{r eval=TRUE}
+
+# a new sinaplot
+assignments %>%                                        # feed data to...
+  mutate(assid = tolower(assignment)) %>%              # create a new column
+  mutate(atype = assignmentType(assid)) %>%            # group assignments 
+  ggplot(aes(x = atype, y = minutes, color = ID)) +    # a plot with aesthetics
+    geom_sina(maxwidth=0.3, show.legend = FALSE) +     # rendered as a sinaplot
+    xlab("Assignment type") +                          # grouped by type
+    coord_flip() +                                     # but left-to-right 
+    theme_tufte(base_size = 12,                        # tufte theme, 12pt font
+                base_family = "sans serif") +          # with sans serif text
+    ggtitle("Time spent on assignments by type")         # add a plot title  
 
 
 ```
 
-That's better.  Now let's plot things again and start fitting some models. 
+# Faceting and whatnot
+
+ggplot2 is useful in that it will happily split up plots into facets, among 
+other handy features.  Here's one example: 
 
 
 ```{r eval=TRUE}
 
-library(tidymodels)
-library(broom.mixed) 
+# facet it 
+assignments %>%                                        # feed data to...
+  mutate(assid = tolower(assignment)) %>%              # create a new column
+  mutate(atype = assignmentType(assid)) %>%            # group assignments 
+  ggplot(aes(x = atype, y = minutes, color = ID)) +    # a plot with aesthetics
+    geom_boxplot(show.legend = FALSE) +                # with an added boxplot
+    geom_point(show.legend = FALSE) +                  # and all the data points
+    xlab("Assignment type") +                          # grouped by type
+    facet_wrap( ~ ID) +                                # split by ID
+    coord_flip() +                                     # but left-to-right 
+    theme_minimal()
 
 ```
+
 
 # Mixed models
 
@@ -150,8 +209,10 @@ the possibility of partially pooling some terms.  For now, let's just intro
 some handlers for these types of models.  (These aren't really handled in 
 either EDfMB *or* ISLRv2, but they're incredibly useful in actual practice.) 
 
-```{r eval=TRUE}
+```{r eval=FALSE}
 
+library(tidymodels)
+library(broom.mixed) 
 library(lme4)
 
 # lmer == "linear mixed effects regression"
