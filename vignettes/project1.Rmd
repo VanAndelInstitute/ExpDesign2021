@@ -47,6 +47,7 @@ Let's start by loading data from the first few weeks' assignments.
 
 # this package
 library(ExpDesign2021)
+library(knitr)
 
 # grab some data to verify it works 
 assignments <- fetchAssignments()
