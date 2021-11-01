@@ -214,7 +214,7 @@ I'm going to stick to the above "300 cells ought to be enough" and do this:
 library(Matrix)
 
 # put it into a column-sparse Matrix object to avoid wasting heaps of RAM
-umi_counts <- as(readMM("matrix.mtx.gz"), "dgCMatrix")
+umi_counts <- as(readMM("GSE132044_mixture_hg19_mm10_count_matrix.mtx.gz"), "dgCMatrix") # "read this as if it were already a column-sparse Matrix object"
 
 # never trust anyone, including yourself 
 stopifnot(nrow(umi_counts) == nrow(genetibble))
@@ -290,7 +290,94 @@ You can just load the result:
 ```r
 
 library(tidySingleCellExperiment)
+#> Loading required package: SingleCellExperiment
+#> Loading required package: SummarizedExperiment
+#> Loading required package: MatrixGenerics
+#> Loading required package: matrixStats
+#> 
+#> Attaching package: 'matrixStats'
+#> The following object is masked from 'package:dplyr':
+#> 
+#>     count
+#> 
+#> Attaching package: 'MatrixGenerics'
+#> The following objects are masked from 'package:matrixStats':
+#> 
+#>     colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+#>     colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+#>     colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+#>     colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+#>     colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+#>     colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+#>     colWeightedMeans, colWeightedMedians, colWeightedSds,
+#>     colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+#>     rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+#>     rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+#>     rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+#>     rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+#>     rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+#>     rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+#>     rowWeightedSds, rowWeightedVars
+#> Loading required package: GenomicRanges
+#> Loading required package: stats4
+#> Loading required package: BiocGenerics
+#> 
+#> Attaching package: 'BiocGenerics'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     IQR, mad, sd, var, xtabs
+#> The following objects are masked from 'package:dplyr':
+#> 
+#>     combine, intersect, setdiff, union
+#> The following objects are masked from 'package:base':
+#> 
+#>     Filter, Find, Map, Position, Reduce, anyDuplicated, append,
+#>     as.data.frame, basename, cbind, colnames, dirname, do.call,
+#>     duplicated, eval, evalq, get, grep, grepl, intersect, is.unsorted,
+#>     lapply, mapply, match, mget, order, paste, pmax, pmax.int, pmin,
+#>     pmin.int, rank, rbind, rownames, sapply, setdiff, sort, table,
+#>     tapply, union, unique, unsplit, which.max, which.min
+#> Loading required package: S4Vectors
+#> 
+#> Attaching package: 'S4Vectors'
+#> The following object is masked from 'package:tidyr':
+#> 
+#>     expand
+#> The following objects are masked from 'package:dplyr':
+#> 
+#>     first, rename
+#> The following objects are masked from 'package:base':
+#> 
+#>     I, expand.grid, unname
+#> Loading required package: IRanges
+#> 
+#> Attaching package: 'IRanges'
+#> The following object is masked from 'package:purrr':
+#> 
+#>     reduce
+#> The following objects are masked from 'package:dplyr':
+#> 
+#>     collapse, desc, slice
+#> Loading required package: GenomeInfoDb
+#> Loading required package: Biobase
+#> Welcome to Bioconductor
+#> 
+#>     Vignettes contain introductory material; view with
+#>     'browseVignettes()'. To cite Bioconductor, see
+#>     'citation("Biobase")', and for packages 'citation("pkgname")'.
+#> 
+#> Attaching package: 'Biobase'
+#> The following object is masked from 'package:MatrixGenerics':
+#> 
+#>     rowMedians
+#> The following objects are masked from 'package:matrixStats':
+#> 
+#>     anyMissing, rowMedians
 tidybarnyard <- tidy(readRDS(url("https://ttriche.github.io/RDS/barnyard.rds")))
+#> Warning: `tidy()` was deprecated in tidySingleCellExperiment 1.1.1.
+#> tidySingleCellExperiment says: tidy() is not needed anymore.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 show(tidybarnyard)
 #> # A SingleCellExperiment-tibble abstraction: 4,199 × 5
 #> [90m# Features=62046 | Assays=counts[39m
@@ -314,9 +401,45 @@ and which are the human HEK293 cells. We can discuss this in class on Monday.
 
 _Question: What's the easiest way to distinguish the mouse and human cells?_
 
+Hint:
+
+
+```r
+
+library(tidySingleCellExperiment) 
+rowGenome <- rowData(tidybarnyard)$genome
+UMIs <- counts(tidybarnyard) 
+
+```
+
 _Question: Can you think of a way to distinguish male from female cells?_
+
+Hint: 
+
+
+```r
+
+# this requires a bit of domain knowledge
+
+```
 
 _Question: Are the two answers above roughly equivalent?  Why?_
 
+
+```r
+
+# this requires a lot of domain knowledge
+
+```
+
 Bonus points if you can say where the two cell lines originally came from, and 
 why the HEK cells don't have the usual PHI-non-compliant names from that time.
+
+# Class exercises 
+
+_Question: what is a UMI and why does it matter in single-cell RNAseq data?_
+
+Load up either the UMI matrix or the SingleCellExperiment (tidy or untidy) and 
+look for the `counts` assay.  (You may need to just use `counts(tidysce)`.) If 
+your computer survives neither of these, you can try using summary statistics, 
+but plan on getting an even smaller subsample to use for the actual Project. 

@@ -197,7 +197,7 @@ I'm going to stick to the above "300 cells ought to be enough" and do this:
 library(Matrix)
 
 # put it into a column-sparse Matrix object to avoid wasting heaps of RAM
-umi_counts <- as(readMM("matrix.mtx.gz"), "dgCMatrix")
+umi_counts <- as(readMM("GSE132044_mixture_hg19_mm10_count_matrix.mtx.gz"), "dgCMatrix") # "read this as if it were already a column-sparse Matrix object"
 
 # never trust anyone, including yourself 
 stopifnot(nrow(umi_counts) == nrow(genetibble))
@@ -281,9 +281,43 @@ and which are the human HEK293 cells. We can discuss this in class on Monday.
 
 _Question: What's the easiest way to distinguish the mouse and human cells?_
 
+Hint:
+
+```{r, bygenome, eval=FALSE}
+
+library(tidySingleCellExperiment) 
+rowGenome <- rowData(tidybarnyard)$genome
+UMIs <- counts(tidybarnyard) 
+
+```
+
 _Question: Can you think of a way to distinguish male from female cells?_
+
+Hint: 
+
+```{r, bysexchr, eval=FALSE}
+
+# this requires a bit of domain knowledge
+
+
+```
 
 _Question: Are the two answers above roughly equivalent?  Why?_
 
+```{r, origins, eval=FALSE}
+
+# this requires a lot of domain knowledge
+
+```
+
 Bonus points if you can say where the two cell lines originally came from, and 
 why the HEK cells don't have the usual PHI-non-compliant names from that time.
+
+# Class exercises 
+
+_Question: what is a UMI and why does it matter in single-cell RNAseq data?_
+
+Load up either the UMI matrix or the SingleCellExperiment (tidy or untidy) and 
+look for the `counts` assay.  (You may need to just use `counts(tidysce)`.) If 
+your computer survives neither of these, you can try using summary statistics, 
+but plan on getting an even smaller subsample to use for the actual Project. 
