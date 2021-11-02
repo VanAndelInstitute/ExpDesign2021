@@ -103,7 +103,6 @@ sample_umis <- function(umis, meta, block, ideal=300) {
   umis[, keep]
 
 }
-</details> 
 
 
 

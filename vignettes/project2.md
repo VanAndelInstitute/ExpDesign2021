@@ -222,12 +222,8 @@ sample_umis <- function(umis, meta, block, ideal=300) {
   umis[, keep]
 
 }
-</details> 
-#> Error: <text>:33:1: unexpected '<'
-#> 32: }
-#> 33: <
-#>     ^
 ```
+</details> 
 
 _Question: can you generate block-random samples from the metadata you have?_
 <details>

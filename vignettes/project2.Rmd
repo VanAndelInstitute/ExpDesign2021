@@ -215,9 +215,9 @@ sample_umis <- function(umis, meta, block, ideal=300) {
   umis[, keep]
 
 }
-</details> 
 
 ```
+</details> 
 
 _Question: can you generate block-random samples from the metadata you have?_
 <details>
