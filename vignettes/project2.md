@@ -22,26 +22,13 @@ If you're knitting this on your own machine, you will want to load knitr too.
 ```r
 #install.packages("remotes")
 #install.packages("BiocManager")
-#BiocManager::install("VanAndelInstitute/ExpDesign2021", build_vignettes=TRUE)
-```
-
-
-```r
+#BiocManager::install("VanAndelInstitute/ExpDesign2021")
 library(knitr)
 ```
 
 To extract just the R code, you can use knitr::knit(input, tangle=TRUE):
 
 
-```r
-knitr::knit("project2.Rmd", tangle = TRUE) 
-#> Error in parse_block(g[-1], g[1], params.src, markdown_mode): Duplicate chunk label 'setup', which has been used for the chunk:
-#> knitr::opts_chunk$set(echo = TRUE)
-#> knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
-#> library(devtools)
-#> load_all("./")
-# [1] "project2.R"
-```
 
 
 # Introduction
@@ -49,6 +36,11 @@ knitr::knit("project2.Rmd", tangle = TRUE)
 ![representative scRNA plots](figure/scRNAseq.jpg)
 
 _Extra credit assignment: figure out whose lab the above came from_
+
+<details>
+  <summary>Click for hint</summary>
+  They're at the Gladstone Institute now, if memory serves. 
+</details> 
 
 For project 2 ("design your own damned experiment"), the class boldly rallied 
 behind Richard Cassidy's suggestion of using single-cell RNA-seq data for an 
@@ -61,6 +53,18 @@ forward (mix two types of cells in two test tubes and then split).
 
 # The Broad Institute barnyard data
 
+_Question: why is it called a 'barnyard' experiment?_
+<details>
+  <summary>Click for Answer</summary>
+  A traditional test of single-cell protocols is to mix cells from two species,
+  and then see if the results can be easily classified into one or the other. 
+  A protocol which does a good job of encapsulating cells will make it easier
+  to classify each cell by species. Some 'barnyard' experiments have tossed in 
+  canine or chicken cells for variety, but since it's such a common benchmark,
+  people took to calling any species-mixing single-cell experiment a 'barnyard' 
+  experiment, and the name stuck. 
+</details> 
+
 The library preparation methods involved in the paper may bear explanation. 
 Short-read RNA sequencing experiments require cDNA as their input, since most
 sequencers expect to call bases from DNA; as a consequence, one must first make
@@ -72,6 +76,17 @@ six of which are employed here.
 [The data is available from GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE132044) although it's a bit unwieldy, weighing in at 300MB for the cell
 mixture model counts alone. Happily, we can load up the metadata without that.
 
+![bus format](figure/bustools.jpeg) 
+
+The barcode, UMI, set or [BUS format](https://academic.oup.com/bioinformatics/article/35/21/4472/5487510) neatly encapsulates the process of transforming reads
+resulting from a single-cell RNAseq experiment into counts of molecular barcodes
+describing a cell, a molecule, and the likely genomic origin of that molecule.
+It's one of the most compact representations possible for raw scRNAseq outputs, 
+and the figure shows how it facilitates direct comparisons. The Broad used their
+`scumi` tool instead, but the basic notion ("make everything comparable") and 
+the resulting sparse matrix of counts is similar in spirit. 
+
+
 ## Cells
 
 
@@ -79,17 +94,18 @@ mixture model counts alone. Happily, we can load up the metadata without that.
 
 # read in the cell names for the count matrix directly from GEO 
 cells <- readLines(gzcon(url("https://ftp.ncbi.nlm.nih.gov/geo/series/GSE132nnn/GSE132044/suppl/GSE132044_mixture_hg19_mm10_cell.tsv.gz")))
+# in English: "create a gzip connection from the URL at GEO, then read from it"
 
 # tidy things up 
 library(stringr)
 library(tidyverse)
 
 # now decode the metadata from it
-tibble(name = cells) %>% 
-  mutate(experiment = str_split(name, "\\.", simplify=TRUE)[,1]) %>% 
-  mutate(method = str_split(name, "\\.", simplify=TRUE)[,2]) %>% 
-  mutate(cell = str_split(name, "\\.", simplify=TRUE)[,3]) ->
-    celltibble 
+tibble(name = cells) %>% # stringr::str_split takes strings and a split pattern
+  mutate(experiment = str_split(name, "\\.", simplify=TRUE)[,1]) %>% # column 1
+  mutate(method = str_split(name, "\\.", simplify=TRUE)[,2]) %>% # column 2 
+  mutate(cell = str_split(name, "\\.", simplify=TRUE)[,3]) -> # column 3
+    celltibble # the result is assigned to the object `celltibble`
 
 # how many cells per mixture were run with each method?
 with(celltibble, 
@@ -121,16 +137,17 @@ intention of chopping them down by much if at all:
 
 # read in the gene names for the count matrix directly from GEO 
 genes <- readLines(gzcon(url("https://ftp.ncbi.nlm.nih.gov/geo/series/GSE132nnn/GSE132044/suppl/GSE132044_mixture_hg19_mm10_gene.tsv.gz")))
+# in English: "create a gzip connection from the URL at GEO, then read from it"
 
 # tidy things up 
 library(stringr)
 library(tidyverse)
 
 # now decode the metadata from it
-tibble(name = genes) %>% 
-  mutate(ensembl = str_split(name, "_", simplify=TRUE)[,2]) %>%
-  mutate(genome = str_split(name, "_", simplify=TRUE)[,3]) ->
-    genetibble 
+tibble(name = genes) %>%  # stringr::str_split(string, pattern_to_split_on)
+  mutate(ensembl = str_split(name, "_", simplify=TRUE)[,2]) %>% # ENS[MUS]G name
+  mutate(genome = str_split(name, "_", simplify=TRUE)[,3]) -> # genome assembly
+    genetibble # assign the result to `genetibble` 
 
 # how many genes per assembly? 
 with(genetibble, table(genome))
@@ -140,6 +157,10 @@ with(genetibble, table(genome))
 ```
 
 _Question: why didn't we use the gene symbols in columns 4:6?_
+<details>
+  <summary>Click for Answer</summary>
+  Because some ENSEMBL gene names map to multiple RefGene/HUGO symbols. 
+</details> 
 
 With the release of Bioconductor 3.14, the project includes a tidy single cell 
 experiment (data structure) package, which is great since all other single cell 
@@ -165,6 +186,8 @@ offer more cells at the price of more dropouts and less sensitivity per cell.)
 No worries, we'll just go ahead and downsample "enough" cells per method.
 It turns out this happens to me often enough that I wrote some code to do it:
 
+<details>
+  <summary>Click for sample_umis() function code</summary>
 
 ```r
 
@@ -199,62 +222,83 @@ sample_umis <- function(umis, meta, block, ideal=300) {
   umis[, keep]
 
 }
+</details> 
+#> Error: <text>:33:1: unexpected '<'
+#> 32: }
+#> 33: <
+#>     ^
 ```
 
 _Question: can you generate block-random samples from the metadata you have?_
+<details>
+  <summary>Click for answer</summary>
+  Easily, although you'd need to rewrite the above function to omit `umis`.
+</details>
+
 
 It's possible your machine or instance would crash if you did the following
 (apparently nobody told IT that a laptop is a device to take RAM on a plane). 
 I'm going to stick to the above "300 cells ought to be enough" and do this:
 
+<details>
+  <summary>Click for gory details</summary>
 
 ```r
 
 # pre-downloaded MatrixMarket file from GEO
 library(Matrix)
 
-# put it into a column-sparse Matrix object to avoid wasting heaps of RAM
-umi_counts <- as(readMM("GSE132044_mixture_hg19_mm10_count_matrix.mtx.gz"), "dgCMatrix") # "read this as if it were already a column-sparse Matrix object"
+if (FALSE) {
 
-# never trust anyone, including yourself 
-stopifnot(nrow(umi_counts) == nrow(genetibble))
-stopifnot(ncol(umi_counts) == nrow(celltibble))
+  # put it into a column-sparse Matrix object to avoid wasting heaps of RAM
+  umi_counts <- as(readMM("GSE132044_mixture_hg19_mm10_count_matrix.mtx.gz"), "dgCMatrix") # "read this as if it were already a column-sparse Matrix object"
 
-# bolt the dimensions back onto the data
-rownames(umi_counts) <- genetibble$name
-colnames(umi_counts) <- celltibble$name
+  # never trust anyone, including yourself 
+  stopifnot(nrow(umi_counts) == nrow(genetibble))
+  stopifnot(ncol(umi_counts) == nrow(celltibble))
 
-# create a basis for blocked downsampling
-celltibble %>%
-  mutate(block = paste(method, experiment, sep="_")) -> 
-    blocktibble 
+  # bolt the dimensions back onto the data
+  rownames(umi_counts) <- genetibble$name
+  colnames(umi_counts) <- celltibble$name
 
-# block downsample 
-downsampled <- sample_umis(umi_counts, blocktibble, blocktibble$block)
-# Kept 300 cells (9%) of type 10x-Chromium-v2_Mixture1.
-# Kept 300 cells (9%) of type 10x-Chromium-v2_Mixture2.
-# Kept 300 cells (84%) of type CEL-Seq2_Mixture1.
-# Kept 300 cells (86%) of type CEL-Seq2_Mixture2.
-# Kept 300 cells (12%) of type Drop-seq_Mixture1.
-# Kept 300 cells (8%) of type Drop-seq_Mixture2.
-# Kept 300 cells (10%) of type inDrops_Mixture1.
-# Kept 300 cells (12%) of type inDrops_Mixture2.
-# Kept 299 cells (100%) of type sci-RNA-seq_Mixture1.
-# Kept 300 cells (6%) of type sci-RNA-seq_Mixture2.
-# Kept 300 cells (18%) of type Seq-Well_Mixture1.
-# Kept 300 cells (30%) of type Seq-Well_Mixture2.
-# Kept 300 cells (88%) of type Smart-seq2_Mixture1.
-# Kept 300 cells (87%) of type Smart-seq2_Mixture2.
-# Kept 4199 (15.2%) of 27714 cells in 14 blocks.
+  # create a basis for blocked downsampling
+  celltibble %>%
+    mutate(block = paste(method, experiment, sep="_")) -> 
+      blocktibble 
 
-saveRDS(downsampled, file="barnyard_umi_sample.rds") 
-# online at https://ttriche.github.io/RDS/barnyard_umi_sample.rds
+  # block downsample 
+  downsampled <- sample_umis(umi_counts, blocktibble, blocktibble$block)
+  # Kept 300 cells (9%) of type 10x-Chromium-v2_Mixture1.
+  # Kept 300 cells (9%) of type 10x-Chromium-v2_Mixture2.
+  # Kept 300 cells (84%) of type CEL-Seq2_Mixture1.
+  # Kept 300 cells (86%) of type CEL-Seq2_Mixture2.
+  # Kept 300 cells (12%) of type Drop-seq_Mixture1.
+  # Kept 300 cells (8%) of type Drop-seq_Mixture2.
+  # Kept 300 cells (10%) of type inDrops_Mixture1.
+  # Kept 300 cells (12%) of type inDrops_Mixture2.
+  # Kept 299 cells (100%) of type sci-RNA-seq_Mixture1.
+  # Kept 300 cells (6%) of type sci-RNA-seq_Mixture2.
+  # Kept 300 cells (18%) of type Seq-Well_Mixture1.
+  # Kept 300 cells (30%) of type Seq-Well_Mixture2.
+  # Kept 300 cells (88%) of type Smart-seq2_Mixture1.
+  # Kept 300 cells (87%) of type Smart-seq2_Mixture2.
+  # Kept 4199 (15.2%) of 27714 cells in 14 blocks.
+
+  saveRDS(downsampled, file="barnyard_umi_sample.rds") 
+  # online at https://ttriche.github.io/RDS/barnyard_umi_sample.rds
+
+} 
 
 ```
+</details>
 
 Right then, let's get to work. You might consider running through some of the 
 steps in the [tidySingleCellExperiment vignette](http://www.bioconductor.org/packages/release/bioc/vignettes/tidySingleCellExperiment/inst/doc/introduction.html) to start with.  If your laptop or Rstudio Cloud instance still blows up, let 
 me know and I'll create some smaller-er downsamples (also a familiar practice).
+
+
+<details>
+  <summary>Load the necessary packages</summary>
 
 
 ```r
@@ -262,122 +306,41 @@ me know and I'll create some smaller-er downsamples (also a familiar practice).
 # need to install from Bioconductor, 
 # unless we're going to dork around with individual genes right from the start
 library(SingleCellExperiment) 
-
-# create the column (cell) annotation data frame
-column_data <- as(celltibble, "DataFrame")
-rownames(column_data) <- column_data$name
-column_data <- column_data[colnames(downsampled), ]
-
-# create the row (gene) annotation data frame
-row_data <- as(genetibble, "DataFrame")
-rownames(row_data) <- row_data$name
-row_data <- row_data[rownames(downsampled), ]
-
-# create a SingleCellExperiment
-barnyard <- SingleCellExperiment(SimpleList(counts=downsampled),
-                                 rowData=row_data, 
-                                 colData=column_data)
-saveRDS(barnyard, file="barnyard.rds") 
-
-# turn the result into a tidySCE
-tidybarnyard <- tidy(barnyard)
-
+library(tidySingleCellExperiment)
 ```
+</details> 
 
-You can just load the result: 
+How the experiment object is created, or (faster) loaded from a URL: 
 
 
 ```r
 
-library(tidySingleCellExperiment)
-#> Loading required package: SingleCellExperiment
-#> Loading required package: SummarizedExperiment
-#> Loading required package: MatrixGenerics
-#> Loading required package: matrixStats
-#> 
-#> Attaching package: 'matrixStats'
-#> The following object is masked from 'package:dplyr':
-#> 
-#>     count
-#> 
-#> Attaching package: 'MatrixGenerics'
-#> The following objects are masked from 'package:matrixStats':
-#> 
-#>     colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
-#>     colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
-#>     colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
-#>     colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
-#>     colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
-#>     colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
-#>     colWeightedMeans, colWeightedMedians, colWeightedSds,
-#>     colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
-#>     rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
-#>     rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
-#>     rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
-#>     rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
-#>     rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
-#>     rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
-#>     rowWeightedSds, rowWeightedVars
-#> Loading required package: GenomicRanges
-#> Loading required package: stats4
-#> Loading required package: BiocGenerics
-#> 
-#> Attaching package: 'BiocGenerics'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     IQR, mad, sd, var, xtabs
-#> The following objects are masked from 'package:dplyr':
-#> 
-#>     combine, intersect, setdiff, union
-#> The following objects are masked from 'package:base':
-#> 
-#>     Filter, Find, Map, Position, Reduce, anyDuplicated, append,
-#>     as.data.frame, basename, cbind, colnames, dirname, do.call,
-#>     duplicated, eval, evalq, get, grep, grepl, intersect, is.unsorted,
-#>     lapply, mapply, match, mget, order, paste, pmax, pmax.int, pmin,
-#>     pmin.int, rank, rbind, rownames, sapply, setdiff, sort, table,
-#>     tapply, union, unique, unsplit, which.max, which.min
-#> Loading required package: S4Vectors
-#> 
-#> Attaching package: 'S4Vectors'
-#> The following object is masked from 'package:tidyr':
-#> 
-#>     expand
-#> The following objects are masked from 'package:dplyr':
-#> 
-#>     first, rename
-#> The following objects are masked from 'package:base':
-#> 
-#>     I, expand.grid, unname
-#> Loading required package: IRanges
-#> 
-#> Attaching package: 'IRanges'
-#> The following object is masked from 'package:purrr':
-#> 
-#>     reduce
-#> The following objects are masked from 'package:dplyr':
-#> 
-#>     collapse, desc, slice
-#> Loading required package: GenomeInfoDb
-#> Loading required package: Biobase
-#> Welcome to Bioconductor
-#> 
-#>     Vignettes contain introductory material; view with
-#>     'browseVignettes()'. To cite Bioconductor, see
-#>     'citation("Biobase")', and for packages 'citation("pkgname")'.
-#> 
-#> Attaching package: 'Biobase'
-#> The following object is masked from 'package:MatrixGenerics':
-#> 
-#>     rowMedians
-#> The following objects are masked from 'package:matrixStats':
-#> 
-#>     anyMissing, rowMedians
+if (FALSE) { # if you want to recreate the SingleCellExperiment: 
+
+  downsampled <- 
+    readRDS(url("https://ttriche.github.io/RDS/barnyard_umi_sample.rds"))
+
+  # create the column (cell) annotation data frame
+  column_data <- as(celltibble, "DataFrame")
+  rownames(column_data) <- column_data$name
+  column_data <- column_data[colnames(downsampled), ]
+
+  # create the row (gene) annotation data frame
+  row_data <- as(genetibble, "DataFrame")
+  rownames(row_data) <- row_data$name
+  row_data <- row_data[rownames(downsampled), ]
+
+  # create a SingleCellExperiment
+  barnyard <- SingleCellExperiment(SimpleList(counts=downsampled),
+                                   rowData=row_data, 
+                                   colData=column_data)
+  saveRDS(barnyard, file="barnyard.rds") 
+
+}
+
+# if you just want to load it 
 tidybarnyard <- tidy(readRDS(url("https://ttriche.github.io/RDS/barnyard.rds")))
-#> Warning: `tidy()` was deprecated in tidySingleCellExperiment 1.1.1.
-#> tidySingleCellExperiment says: tidy() is not needed anymore.
-#> This warning is displayed once every 8 hours.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
+#> Error: No tidy method for objects of class SingleCellExperiment
 show(tidybarnyard)
 #> # A SingleCellExperiment-tibble abstraction: 4,199 × 5
 #> [90m# Features=62046 | Assays=counts[39m
@@ -401,7 +364,8 @@ and which are the human HEK293 cells. We can discuss this in class on Monday.
 
 _Question: What's the easiest way to distinguish the mouse and human cells?_
 
-Hint:
+<details>
+  <summary>Hint:</summary>
 
 
 ```r
@@ -411,26 +375,23 @@ rowGenome <- rowData(tidybarnyard)$genome
 UMIs <- counts(tidybarnyard) 
 
 ```
+</details>
 
 _Question: Can you think of a way to distinguish male from female cells?_
 
-Hint: 
+<details>
+  <summary>Hint:</summary>
 
 
 ```r
 
-# this requires a bit of domain knowledge
+# this requires a bit of domain knowledge, to be added
 
 ```
+</details> 
 
 _Question: Are the two answers above roughly equivalent?  Why?_
 
-
-```r
-
-# this requires a lot of domain knowledge
-
-```
 
 Bonus points if you can say where the two cell lines originally came from, and 
 why the HEK cells don't have the usual PHI-non-compliant names from that time.
@@ -443,3 +404,10 @@ Load up either the UMI matrix or the SingleCellExperiment (tidy or untidy) and
 look for the `counts` assay.  (You may need to just use `counts(tidysce)`.) If 
 your computer survives neither of these, you can try using summary statistics, 
 but plan on getting an even smaller subsample to use for the actual Project. 
+
+Or, just go back and look at the BUStools figure. 
+
+_Question: what shall we investigate for project 2?_ 
+
+I'm thinking the proportions of the mixtures, but I want to fit those first. 
+Note that a t-test on proportions is not necessarily "proper"... ! 
