@@ -44,6 +44,7 @@ Let's start by loading data from the first few weeks' assignments.
 
 # this package
 library(ExpDesign2021)
+library(knitr)
 
 # grab some data to verify it works 
 assignments <- fetchAssignments()
@@ -108,6 +109,10 @@ fetchAssignments() %>%                         # get data, then
 #> ✔ Reading from "2021_ExpDesign".
 #> ✔ Range 'Form Responses 1'.
 #> Done.
+#> Note: Using an external vector in selections is ambiguous.
+#> ℹ Use `all_of(columnNames)` instead of `columnNames` to silence this message.
+#> ℹ See <https://tidyselect.r-lib.org/reference/faq-external-vector.html>.
+#> This message is displayed once per session.
 ```
 
 
@@ -167,7 +172,7 @@ assignments %>%                                        # feed data to...
 #> Don't know how to automatically pick scale for object of type difftime. Defaulting to continuous.
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
+![plot of chunk plots](figure/plots-1.png)
 
 ```r
 
@@ -183,7 +188,7 @@ assignments %>%
     ggtitle("Hours spent on assignments by ID")        # add a plot title  
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-2.png)
+![plot of chunk plots](figure/plots-2.png)
 
 Let's do a little bit of modeling on the data. First, let's group assignments.
 (It turns out that both the comments and the assignment names can use some work)
@@ -286,7 +291,7 @@ assignments %>%                                        # feed data to...
 #> Don't know how to automatically pick scale for object of type difftime. Defaulting to continuous.
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png)
+![plot of chunk sinaplots](figure/sinaplots-1.png)
 
 ```r
 
@@ -304,7 +309,7 @@ assignments %>%                                        # feed data to...
 #> Don't know how to automatically pick scale for object of type difftime. Defaulting to continuous.
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-2.png)
+![plot of chunk sinaplots](figure/sinaplots-2.png)
 
 ```r
 
@@ -322,7 +327,7 @@ assignments %>%                                        # feed data to...
     ggtitle("Hours spent on assignments by type")         # add a plot title  
 ```
 
-![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-3.png)
+![plot of chunk sinaplots](figure/sinaplots-3.png)
 
 # Faceting and whatnot
 
@@ -346,7 +351,7 @@ assignments %>%                                        # feed data to...
     theme_minimal()                                    # and less minimal
 ```
 
-![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png)
+![plot of chunk faceting](figure/faceting-1.png)
 
 If you fitted a linear regression to some of the data at some point, 
 you probably recognize this formula notation.  In R, it is ubiquitous:
@@ -369,16 +374,16 @@ assignments %>%                              # feed data to...
 glimpse(hours_by_type)
 #> Rows: 95
 #> Columns: 10
-#> $ timestamp  [3m[38;5;246m<dttm>[39m[23m 2021-09-04 13:57:26, 2021-09-04 13:58:26, 2021-09-04 13:59:05, 202…
-#> $ ID         [3m[38;5;246m<chr>[39m[23m "b5548ea", "b5548ea", "b5548ea", "b5548ea", "b5548ea", "Blobfish", …
-#> $ assignment [3m[38;5;246m<chr>[39m[23m "Reading: Intro to Statistical Learning 2nd edition (chapters 1 and…
-#> $ start      [3m[38;5;246m<dttm>[39m[23m 1899-12-30 12:00:00, 1899-12-30 15:00:00, 1899-12-30 15:04:00, 189…
-#> $ end        [3m[38;5;246m<dttm>[39m[23m 1899-12-30 14:50:00, 1899-12-30 15:03:00, 1899-12-30 15:40:00, 189…
-#> $ comments   [3m[38;5;246m<chr>[39m[23m NA, NA, NA, NA, NA, "Book is easy to read with good experimental ex…
-#> $ minutes    [3m[38;5;246m<drtn>[39m[23m 170 mins, 3 mins, 36 mins, 15 mins, 27 mins, 60 mins, 23 mins, 57 …
-#> $ assid      [3m[38;5;246m<chr>[39m[23m "reading: intro to statistical learning 2nd edition (chapters 1 and…
-#> $ atype      [3m[38;5;246m<chr>[39m[23m "ISLRv2", "lab", "lab", "lab", "EDfB", "EDfB", "EDfB", "EDfB", "ISL…
-#> $ hours      [3m[38;5;246m<dbl>[39m[23m 2.833333333, 0.050000000, 0.600000000, 0.250000000, 0.450000000, 1.…
+#> $ timestamp  <dttm> 2021-09-04 13:57:26, 2021-09-04 13:58:26, 2021-09-04 13:59…
+#> $ ID         <chr> "b5548ea", "b5548ea", "b5548ea", "b5548ea", "b5548ea", "Blo…
+#> $ assignment <chr> "Reading: Intro to Statistical Learning 2nd edition (chapte…
+#> $ start      <dttm> 1899-12-30 12:00:00, 1899-12-30 15:00:00, 1899-12-30 15:04…
+#> $ end        <dttm> 1899-12-30 14:50:00, 1899-12-30 15:03:00, 1899-12-30 15:40…
+#> $ comments   <chr> NA, NA, NA, NA, NA, "Book is easy to read with good experim…
+#> $ minutes    <drtn> 170 mins, 3 mins, 36 mins, 15 mins, 27 mins, 60 mins, 23 m…
+#> $ assid      <chr> "reading: intro to statistical learning 2nd edition (chapte…
+#> $ atype      <chr> "ISLRv2", "lab", "lab", "lab", "EDfB", "EDfB", "EDfB", "EDf…
+#> $ hours      <dbl> 2.833333333, 0.050000000, 0.600000000, 0.250000000, 0.45000…
 
 # should we transform these?
 hours_by_type %>%
@@ -402,7 +407,7 @@ library(patchwork)                                     # for easier arrangement
 plot_raw + plot_log10                                  # this is via patchwork
 ```
 
-![plot of chunk unnamed-chunk-8](figure/unnamed-chunk-8-1.png)
+![plot of chunk regress](figure/regress-1.png)
 
 ```r
 # personally I'm OK with not transforming these 
@@ -588,6 +593,12 @@ isn't directly related to mixed models. I didn't come up with the names...
 ```r
 
 library(mclust) # mixture model clustering, incredibly handy package
+#>     __  ___________    __  _____________
+#>    /  |/  / ____/ /   / / / / ___/_  __/
+#>   / /|_/ / /   / /   / / / /\__ \ / /   
+#>  / /  / / /___/ /___/ /_/ /___/ // /    
+#> /_/  /_/\____/_____/\____//____//_/    version 5.4.8
+#> Type 'citation("mclust")' for citing this R package in publications.
 
 # fit 2 components
 hours_by_type %>% 
@@ -596,18 +607,18 @@ hours_by_type %>%
   Mclust(G=1:2) ->           # fit a mixture with either 1 or 2 components 
     mfit0                    # save the results for plotting
 #> fitting ...
-#>   |                                                                                      |                                                                              |   0%  |                                                                                      |================                                                              |  20%  |                                                                                      |===============================                                               |  40%  |                                                                                      |===============================================                               |  60%  |                                                                                      |==============================================================                |  80%  |                                                                                      |==============================================================================| 100%
+#>   |                                                                              |                                                                      |   0%  |                                                                              |==============                                                        |  20%  |                                                                              |============================                                          |  40%  |                                                                              |==========================================                            |  60%  |                                                                              |========================================================              |  80%  |                                                                              |======================================================================| 100%
 
 plot(mfit0, "classification") 
 ```
 
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png)
+![plot of chunk mixture](figure/mixture-1.png)
 
 ```r
 plot(mfit0, "density") 
 ```
 
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-2.png)
+![plot of chunk mixture](figure/mixture-2.png)
 
 ```r
 
@@ -618,18 +629,18 @@ hours_by_type %>%
   Mclust() ->                # fit a mixture and the number of components in it 
     mfit1                    # save the results for plotting
 #> fitting ...
-#>   |                                                                                      |                                                                              |   0%  |                                                                                      |====                                                                          |   5%  |                                                                                      |========                                                                      |  11%  |                                                                                      |============                                                                  |  16%  |                                                                                      |================                                                              |  21%  |                                                                                      |=====================                                                         |  26%  |                                                                                      |=========================                                                     |  32%  |                                                                                      |=============================                                                 |  37%  |                                                                                      |=================================                                             |  42%  |                                                                                      |=====================================                                         |  47%  |                                                                                      |=========================================                                     |  53%  |                                                                                      |=============================================                                 |  58%  |                                                                                      |=================================================                             |  63%  |                                                                                      |=====================================================                         |  68%  |                                                                                      |=========================================================                     |  74%  |                                                                                      |==============================================================                |  79%  |                                                                                      |==================================================================            |  84%  |                                                                                      |======================================================================        |  89%  |                                                                                      |==========================================================================    |  95%  |                                                                                      |==============================================================================| 100%
+#>   |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   5%  |                                                                              |=======                                                               |  11%  |                                                                              |===========                                                           |  16%  |                                                                              |===============                                                       |  21%  |                                                                              |==================                                                    |  26%  |                                                                              |======================                                                |  32%  |                                                                              |==========================                                            |  37%  |                                                                              |=============================                                         |  42%  |                                                                              |=================================                                     |  47%  |                                                                              |=====================================                                 |  53%  |                                                                              |=========================================                             |  58%  |                                                                              |============================================                          |  63%  |                                                                              |================================================                      |  68%  |                                                                              |====================================================                  |  74%  |                                                                              |=======================================================               |  79%  |                                                                              |===========================================================           |  84%  |                                                                              |===============================================================       |  89%  |                                                                              |==================================================================    |  95%  |                                                                              |======================================================================| 100%
 
 plot(mfit1, "classification") 
 ```
 
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-3.png)
+![plot of chunk mixture](figure/mixture-3.png)
 
 ```r
 plot(mfit1, "density") 
 ```
 
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-4.png)
+![plot of chunk mixture](figure/mixture-4.png)
 
 ```r
 

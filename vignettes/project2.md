@@ -336,23 +336,40 @@ if (FALSE) { # if you want to recreate the SingleCellExperiment:
 
 # if you just want to load it 
 tidybarnyard <- tidy(readRDS(url("https://ttriche.github.io/RDS/barnyard.rds")))
-#> Error: No tidy method for objects of class SingleCellExperiment
+#> Loading required package: SingleCellExperiment
+#> Loading required package: SummarizedExperiment
+#> Loading required package: MatrixGenerics
+#> Loading required package: matrixStats
+#> 
+#> Attaching package: 'matrixStats'
+#> The following object is masked from 'package:dplyr':
+#> 
+#>     count
+#> 
+#> Attaching package: 'MatrixGenerics'
+#> The following objects are masked from 'package:matrixStats':
+#> 
+#>     colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+#>     colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+#>     colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+#>     colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+#>     colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+#>     colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+#>     colWeightedMeans, colWeightedMedians, colWeightedSds,
+#>     colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+#>     rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+#>     rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+#>     rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+#>     rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+#>     rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+#>     rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+#>     rowWeightedSds, rowWeightedVars
+#> Loading required package: GenomicRanges
+#> Loading required package: stats4
+#> Loading required package: BiocGenerics
+#> Error in .requirePackage(package): unable to find required package 'SingleCellExperiment'
 show(tidybarnyard)
-#> # A SingleCellExperiment-tibble abstraction: 4,199 × 5
-#> [90m# Features=62046 | Assays=counts[39m
-#>    cell                                      name      experiment method  cell  
-#>    <chr>                                     <chr>     <chr>      <chr>   <chr> 
-#>  1 Mixture1.10x-Chromium-v2.GGGCATCGTCACACGC Mixture1… Mixture1   10x-Ch… GGGCA…
-#>  2 Mixture1.10x-Chromium-v2.CACATAGAGATACACA Mixture1… Mixture1   10x-Ch… CACAT…
-#>  3 Mixture1.10x-Chromium-v2.CACTCCATCCTCCTAG Mixture1… Mixture1   10x-Ch… CACTC…
-#>  4 Mixture1.10x-Chromium-v2.TATGCCCGTTAAGATG Mixture1… Mixture1   10x-Ch… TATGC…
-#>  5 Mixture1.10x-Chromium-v2.CACAGGCTCCTTTCTC Mixture1… Mixture1   10x-Ch… CACAG…
-#>  6 Mixture1.10x-Chromium-v2.TTTGCGCAGTGGTAGC Mixture1… Mixture1   10x-Ch… TTTGC…
-#>  7 Mixture1.10x-Chromium-v2.CGATCGGGTCATCCCT Mixture1… Mixture1   10x-Ch… CGATC…
-#>  8 Mixture1.10x-Chromium-v2.GTTAAGCCACCTGGTG Mixture1… Mixture1   10x-Ch… GTTAA…
-#>  9 Mixture1.10x-Chromium-v2.AACTTTCCATAGACTC Mixture1… Mixture1   10x-Ch… AACTT…
-#> 10 Mixture1.10x-Chromium-v2.GAAGCAGCAGTTCATG Mixture1… Mixture1   10x-Ch… GAAGC…
-#> # … with 4,189 more rows
+#> Error in h(simpleError(msg, call)): error in evaluating the argument 'object' in selecting a method for function 'show': object 'tidybarnyard' not found
 ```
 
 I'd suggest, as a first pass, trying to sort out which are the mouse 3T3 cells,

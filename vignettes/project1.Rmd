@@ -11,7 +11,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-```{r setup, include=FALSE}
+```{r, setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 library(devtools)
@@ -22,7 +22,7 @@ load_all("./")
 
 Install the ExpDesign2021 package from github.
 
-```{r eval = FALSE, message = FALSE}
+```{r, installation, eval = FALSE, message = FALSE}
 #install.packages("remotes")
 #install.packages("BiocManager")
 #BiocManager::install("VanAndelInstitute/ExpDesign2021", build_vignettes=TRUE)
@@ -43,7 +43,7 @@ ExpDesign2021::fetchAssignments. (If you want to be super clear about where
 a function should come from, package::function(arguments) is the way to go.)
 Let's start by loading data from the first few weeks' assignments.
 
-```{r eval=TRUE}
+```{r, assignments, eval=TRUE}
 
 # this package
 library(ExpDesign2021)
@@ -79,7 +79,7 @@ fetchAssignments() %>%                         # get data, then
 FooBarBazQux is the userID I (tim) chose. I'm not a student, so out it goes.
 Let's also add a column for time taken, and filter based on that.
 
-```{r eval=TRUE}
+```{r, dates, eval=TRUE}
 library(lubridate)                             # for date handling
 
 fetchAssignments() %>%                         # get data, then 
@@ -101,7 +101,7 @@ Let's do a bit of exploratory analysis on the tidied assignment data.
 Unless you are trying to hide data, a beeswarm is usually a good default.
 (Tip: statisticians and statistical reviewers *will* pounce on boxplots.)
 
-```{r eval=TRUE}
+```{r, plots, eval=TRUE}
 
 library(ggplot2)  # ggplot
 library(ggforce)  # geom_sina
@@ -135,7 +135,7 @@ Let's do a little bit of modeling on the data. First, let's group assignments.
 Let's see if we can extract some rhyme or reason from the words making up these.
 (For more on this topic, you can visit the [tidy text mining book site](https://www.tidytextmining.com/tidytext.html).)
 
-```{r eval=TRUE}
+```{r, tokens, eval=TRUE}
 
 # a quick helper function: 
 assignmentType <- function(x) {
@@ -186,7 +186,7 @@ read [the tidytext chapter on term frequency - inverse document frequency](https
 In any event, digesting the text of these fields made it a bit easier to group.
 Now let's plot things again.
 
-```{r eval=TRUE}
+```{r, sinaplots, eval=TRUE}
 
 # default sinaplot
 assignments %>%                                        # feed data to...
@@ -231,7 +231,7 @@ assignments %>%                                        # feed data to...
 ggplot2 is useful in that it will happily split up plots into facets (sub-plots)
 among its many other handy features.  Here's one example: 
 
-```{r eval=TRUE}
+```{r, faceting, eval=TRUE}
 
 # facet it 
 assignments %>%                                        # feed data to...
@@ -253,7 +253,7 @@ you probably recognize this formula notation.  In R, it is ubiquitous:
 
     y ~ x1 + x2 + x1:x2 + ... 
 
-```{r eval=TRUE}
+```{r, regress, eval=TRUE}
 
 # setup
 assignments %>%                              # feed data to...
@@ -295,7 +295,7 @@ The recommended starting point for modeling things in the tidyverse is through
 the [*tidymodels*](https://tidymodels.org/start/) package, and the tidymodels
 folks suggest [*A ModernDive into R and the Tidyverse*](https://moderndive.com/) for beginners. So let's use [Chapter 5: Basic Regression](https://moderndive.com/5-regression.html) as a roadmap.
 
-```{r eval=TRUE}
+```{r, moderndive, eval=TRUE}
 
 library(moderndive) # for get_regression_table
 
@@ -330,7 +330,7 @@ the possibility of partially pooling some terms.  For now, let's just intro
 some handlers for these types of models.  (These aren't really handled in 
 either EDfMB *or* ISLRv2, but they're incredibly useful in actual practice.) 
 
-```{r eval=FALSE}
+```{r, mixed, eval=FALSE}
 
 library(tidymodels)
 library(broom.mixed) 
@@ -368,7 +368,7 @@ Suppose we treat the observations as what they look like (a mixture) and try
 to determine how that fits. Note that we fit a mixture model below, which 
 isn't directly related to mixed models. I didn't come up with the names...
 
-```{r eval=TRUE}
+```{r, mixture, eval=TRUE}
 
 library(mclust) # mixture model clustering, incredibly handy package
 
