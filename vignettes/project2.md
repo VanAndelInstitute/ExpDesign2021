@@ -6,7 +6,7 @@ output:
   html_document:
     keep_md: true
 vignette: >
-  %\VignetteIndexEntry{Project1}
+  %\VignetteIndexEntry{Project2}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -171,6 +171,8 @@ The package is, not coincidentally, called [tidySingleCellExperiment](http://www
 ```r
 
 if (!require("tidySingleCellExperiment")) {
+  BiocManager::install("SingleCellExperiment")
+  library(SingleCellExperiment)
   BiocManager::install("tidySingleCellExperiment")
   library(tidySingleCellExperiment)
 }
@@ -338,34 +340,7 @@ if (FALSE) { # if you want to recreate the SingleCellExperiment:
 tidybarnyard <- tidy(readRDS(url("https://ttriche.github.io/RDS/barnyard.rds")))
 #> Loading required package: SingleCellExperiment
 #> Loading required package: SummarizedExperiment
-#> Loading required package: MatrixGenerics
-#> Loading required package: matrixStats
-#> 
-#> Attaching package: 'matrixStats'
-#> The following object is masked from 'package:dplyr':
-#> 
-#>     count
-#> 
-#> Attaching package: 'MatrixGenerics'
-#> The following objects are masked from 'package:matrixStats':
-#> 
-#>     colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
-#>     colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
-#>     colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
-#>     colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
-#>     colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
-#>     colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
-#>     colWeightedMeans, colWeightedMedians, colWeightedSds,
-#>     colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
-#>     rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
-#>     rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
-#>     rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
-#>     rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
-#>     rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
-#>     rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
-#>     rowWeightedSds, rowWeightedVars
 #> Loading required package: GenomicRanges
-#> Loading required package: stats4
 #> Loading required package: BiocGenerics
 #> Error in .requirePackage(package): unable to find required package 'SingleCellExperiment'
 show(tidybarnyard)
