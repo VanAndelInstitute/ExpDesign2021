@@ -150,9 +150,9 @@ is_human <- function(x, minHuman=0.03, maxHuman=0.2, maxMouse=0.03) {
 }
   
 # note redudancy
-is_mouse <- function(x, mouse, minMouse=0.03, maxMouse=0.2, maxHuman=0.03) {
-  if (human > maxHuman) return(FALSE)
-  else if (mouse > minMouse & mouse < maxMouse) return(TRUE)
+is_mouse <- function(x, minMouse=0.03, maxMouse=0.2, maxHuman=0.03) {
+  if (x['human'] > maxHuman) return(FALSE)
+  else if (x['mouse'] > minMouse & x['mouse'] < maxMouse) return(TRUE)
   else return(FALSE)
 }
   
@@ -164,7 +164,7 @@ classified <- function(x) {
   
 frac <- data.frame(fracByCell)
 frac$classifiable <- apply(frac, 1, classified)
-fractibble %>% mutate(classifiable = classified(human, mouse)) -> classified
+
   
 ```
               
