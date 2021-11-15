@@ -162,7 +162,7 @@ classified <- function(human, mouse) {
   else return(FALSE) 
 }
   
-fractibble <- tibble(fracByCell)
+fractibble <- tibble(data.frame(fracByCell))
 fractibble %>% mutate(classifiable = classified(human, mouse)) -> classified
   
 ```
