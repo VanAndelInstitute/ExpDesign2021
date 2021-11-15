@@ -138,6 +138,35 @@ fracByCell <- do.call(cbind,
 smoothScatter(fracByCell) 
 ```
 
+Suppose we want to implement some logic for gating cells.  For example, we might say "if a cell has greater than 0.03 human transcriptomes expressed, less than 0.2 human transcriptomes, and less than 0.2 mouse transcriptomes, we'll call it human".  Needless to say this is a bit of a craft.  Let's implement it. 
+  
+```{r, gating} 
+
+# could do this "tidy" style on a tibble
+is_human <- function(human, mouse, minHuman=0.03, maxHuman=0.2, maxMouse=0.03) { 
+  if (mouse > maxMouse) return(FALSE)
+  if (human > minHuman & human < maxHuman) return(TRUE)
+  else return(FALSE) 
+}
+  
+# note redudancy
+is_mouse <- function(human, mouse, minMouse=0.03, maxMouse=0.2, maxHuman=0.03) {
+  if (human > maxHuman) return(FALSE)
+  if (mouse > minMouse & mouse < maxMouse) return(TRUE)
+  else return(FALSE)
+}
+  
+classified <- function(human, mouse) { 
+  if (is_mouse(human=human, mouse=mouse) & is_human(human=human, mouse=mouse)) return(FALSE)
+  if (is_mouse(human=human, mouse=mouse) | is_human(human=human, mouse=mouse)) return(TRUE) 
+  else return(FALSE) 
+}
+  
+fractibble <- tibble(fracByCell)
+fractibble %>% mutate(classifiable = classified(human, mouse)) -> classified
+  
+```
+              
 _Question: Can you do this again but for each method?_
 
 _Question: Can you do this again but for each mixture?_
