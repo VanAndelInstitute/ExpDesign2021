@@ -11,8 +11,8 @@ Description: For the practical sessions in Experimental Design & Biostats 2021,
              Rstudio to \url{https://rpubs.com/}, so all that's left is to make
              sure that dependencies for assignments are in place. This package
              also includes a few convenience functions (phelp, lsos, etc.).
-Version: 0.11.08
-Date: 2021-11-08
+Version: 0.11.15
+Date: 2021-11-15
 Authors@R: person("Triche", "Lab", role=c("aut", "cre"), email="trichelab@gmail.com")
 Author: Triche Lab [aut, cre]
 Maintainer: Triche Lab <trichelab@gmail.com>
