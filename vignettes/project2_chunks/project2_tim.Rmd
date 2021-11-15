@@ -143,26 +143,27 @@ Suppose we want to implement some logic for gating cells.  For example, we might
 ```{r, gating} 
 
 # could do this "tidy" style on a tibble
-is_human <- function(human, mouse, minHuman=0.03, maxHuman=0.2, maxMouse=0.03) { 
-  if (mouse > maxMouse) return(FALSE)
-  if (human > minHuman & human < maxHuman) return(TRUE)
+is_human <- function(x, minHuman=0.03, maxHuman=0.2, maxMouse=0.03) { 
+  if (x['mouse'] > maxMouse) return(FALSE)
+  else if (x['human'] > minHuman & x['human'] < maxHuman) return(TRUE)
   else return(FALSE) 
 }
   
 # note redudancy
-is_mouse <- function(human, mouse, minMouse=0.03, maxMouse=0.2, maxHuman=0.03) {
+is_mouse <- function(x, mouse, minMouse=0.03, maxMouse=0.2, maxHuman=0.03) {
   if (human > maxHuman) return(FALSE)
-  if (mouse > minMouse & mouse < maxMouse) return(TRUE)
+  else if (mouse > minMouse & mouse < maxMouse) return(TRUE)
   else return(FALSE)
 }
   
-classified <- function(human, mouse) { 
-  if (is_mouse(human=human, mouse=mouse) & is_human(human=human, mouse=mouse)) return(FALSE)
-  if (is_mouse(human=human, mouse=mouse) | is_human(human=human, mouse=mouse)) return(TRUE) 
+classified <- function(x) { 
+  if (is_mouse(x) & is_human(x)) return(FALSE)
+  else if (is_mouse(x) | is_human(x)) return(TRUE) 
   else return(FALSE) 
 }
   
-fractibble <- tibble(data.frame(fracByCell))
+frac <- data.frame(fracByCell)
+frac$classifiable <- apply(frac, 1, classified)
 fractibble %>% mutate(classifiable = classified(human, mouse)) -> classified
   
 ```
