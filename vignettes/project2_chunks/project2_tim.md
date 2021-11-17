@@ -557,9 +557,22 @@ table(mfit$classification) # it turns out that we end up with less human cells
 #>  142 1941 2116
 barnyardtibble$mclass <- factor(mfit$classification)
 
+# confusion matrix helps us assign correspondence
+tbl <- with(barnyardtibble, table(mclass, label))
+(mixlabels <- apply(tbl, 2, which.max))
+#>   human   mouse suspect 
+#>       3       2       2
+
+# "whichever class isn't mostly human or mouse is suspect"
+mixlabels["suspect"] <- setdiff(1:3, mixlabels[c("human","mouse")])
+mixnames <- names(mixlabels)[c(1, 2, 3)] # label by number
+
+# relabel the mixture assignments: 
+barnyardtibble %>% mutate(mixlabel = mixnames[mclass]) -> barnyardtibble
+
 # add mixture assignments:
 p <- ggplot(barnyardtibble, 
-            aes(x=fracmouse, y=frachuman, color=mclass, shape=label)) +
+            aes(x=fracmouse, y=frachuman, color=mixlabel, shape=label)) +
   xlab("Mouse transcripts expressed") +
   scale_x_continuous(labels = scales::percent) +
   ylab("Human transcripts expressed") +
@@ -578,11 +591,9 @@ Suppose we re-run the regressions using the mixture model fits. What happens?
 
 ```r
 
-# relabel the mixture class calls based on the previous plot
-barnyardtibble %>% mutate(mclass = case_when(mclass == 1 ~ "mouse", 
-                                             mclass == 3 ~ "human", 
-                                             TRUE ~ "suspect"))-> barnyardtibble
-barnyardtibble %>% mutate(mclassifiable = mclass != "suspect") -> barnyardtibble
+# classifiable _by mixture model_ 
+barnyardtibble %>% 
+  mutate(mclassifiable = mixlabel != "suspect") -> barnyardtibble
 
 # null model 
 fitm0 <- glm(mclassifiable ~ 0, data=barnyardtibble, family=binomial) # random
