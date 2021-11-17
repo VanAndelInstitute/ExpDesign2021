@@ -349,17 +349,24 @@ p + ggtitle("mixture model fit")
 
 # confusion matrix helps us assign correspondence
 tbl <- with(barnyardtibble, table(mclass, label))
-(mixlabels <- apply(tbl, 2, which.max))
-
-# "whichever class isn't mostly human or mouse is suspect"
-mixlabels["suspect"] <- setdiff(1:3, mixlabels[c("human","mouse")])
-mixnames <- names(mixlabels)[c(1, 2, 3)] # label by number
+mouseclass <- which.max(tbl[, "mouse"])
+humanclass <- which.max(tbl[, "human"])
 
 # relabel the mixture assignments: 
-barnyardtibble %>% mutate(mixlabel = mixnames[mclass]) -> barnyardtibble
+barnyardtibble %>% 
+  mutate(mixlabel = case_when(mclass == mouseclass ~ "mouse", 
+                              mclass == humanclass ~ "human", 
+                              TRUE ~ "suspect")
+         ) -> barnyardtibble
 
 # how did we do? 
 with(barnyardtibble, table(mixlabel, label))
+
+# specifically, do we label all the human and mouse cells confidently?
+with(barnyardtibble, table(mixlabel, label))[, c("human", "mouse")]
+
+
+## ---- mixlabeledplot----------------------------------------------------------
 
 # add mixture labels to the plot:
 p <- ggplot(barnyardtibble, 

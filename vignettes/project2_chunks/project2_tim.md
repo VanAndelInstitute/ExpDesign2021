@@ -587,24 +587,37 @@ It looks like we will need to match up the mixture classes with our labels.
 
 # confusion matrix helps us assign correspondence
 tbl <- with(barnyardtibble, table(mclass, label))
-(mixlabels <- apply(tbl, 2, which.max))
-#>   human   mouse suspect 
-#>       3       2       2
-
-# "whichever class isn't mostly human or mouse is suspect"
-mixlabels["suspect"] <- setdiff(1:3, mixlabels[c("human","mouse")])
-mixnames <- names(mixlabels)[c(1, 2, 3)] # label by number
+mouseclass <- which.max(tbl[, "mouse"])
+humanclass <- which.max(tbl[, "human"])
 
 # relabel the mixture assignments: 
-barnyardtibble %>% mutate(mixlabel = mixnames[mclass]) -> barnyardtibble
+barnyardtibble %>% 
+  mutate(mixlabel = case_when(mclass == mouseclass ~ "mouse", 
+                              mclass == humanclass ~ "human", 
+                              TRUE ~ "suspect")
+         ) -> barnyardtibble
 
 # how did we do? 
 with(barnyardtibble, table(mixlabel, label))
 #>          label
 #> mixlabel  human mouse suspect
-#>   human      18     5     119
+#>   human    1925     0     191
 #>   mouse       0  1716     225
-#>   suspect  1925     0     191
+#>   suspect    18     5     119
+
+# specifically, do we label all the human and mouse cells confidently?
+with(barnyardtibble, table(mixlabel, label))[, c("human", "mouse")]
+#>          label
+#> mixlabel  human mouse
+#>   human    1925     0
+#>   mouse       0  1716
+#>   suspect    18     5
+```
+
+How did we do? 
+
+
+```r
 
 # add mixture labels to the plot:
 p <- ggplot(barnyardtibble, 
@@ -620,7 +633,7 @@ p <- ggplot(barnyardtibble,
 p + ggtitle("mixture model fit with labels")
 ```
 
-![plot of chunk mixlabels](figure/mixlabels-1.png)
+![plot of chunk mixlabeledplot](figure/mixlabeledplot-1.png)
 
 Suppose we re-run the regressions using the mixture model fits. What happens?
 
