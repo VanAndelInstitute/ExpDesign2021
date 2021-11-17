@@ -327,6 +327,23 @@ mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]),
 table(mfit$classification) # it turns out that we end up with less human cells
 barnyardtibble$mclass <- factor(mfit$classification)
 
+# plot the results
+p <- ggplot(barnyardtibble, 
+            aes(x=fracmouse, y=frachuman, color=mclass, shape=label)) +
+  xlab("Mouse transcripts expressed") +
+  scale_x_continuous(labels = scales::percent) +
+  ylab("Human transcripts expressed") +
+  scale_y_continuous(labels = scales::percent) +
+  geom_point(alpha=0.5) + 
+  theme_minimal() 
+ 
+# plot it
+p + ggtitle("mixture model fit")
+
+
+
+## ---- mixlabels---------------------------------------------------------------
+
 # confusion matrix helps us assign correspondence
 tbl <- with(barnyardtibble, table(mclass, label))
 (mixlabels <- apply(tbl, 2, which.max))
@@ -338,7 +355,10 @@ mixnames <- names(mixlabels)[c(1, 2, 3)] # label by number
 # relabel the mixture assignments: 
 barnyardtibble %>% mutate(mixlabel = mixnames[mclass]) -> barnyardtibble
 
-# add mixture assignments:
+# how did we do? 
+with(barnyardtibble, kable(mixlabel, label))
+
+# add mixture labels to the plot:
 p <- ggplot(barnyardtibble, 
             aes(x=fracmouse, y=frachuman, color=mixlabel, shape=label)) +
   xlab("Mouse transcripts expressed") +
@@ -349,7 +369,7 @@ p <- ggplot(barnyardtibble,
   theme_minimal() 
  
 # plot it
-p + ggtitle("mixture model fit")
+p + ggtitle("mixture model fit with labels")
 
 
 

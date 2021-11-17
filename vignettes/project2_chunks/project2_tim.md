@@ -108,10 +108,10 @@ a little easier to keep track of what's going on when we subset either one.
 
 # as what is our object masquerading?
 show(tidybarnyard[,0]) # "just show me information about it, with 0 cells"
-#> # A SingleCellExperiment-tibble abstraction: 0 × 8
-#> [90m# Features=62046 | Assays=counts, logcounts[39m
-#> # … with 8 variables: cell <chr>, name <chr>, experiment <chr>, method <chr>,
-#> #   barcode <chr>, sizeFactor <dbl>, fracmouse <dbl>, frachuman <dbl>
+#> # A SingleCellExperiment-tibble abstraction: 0 × 5
+#> [90m# Features=62046 | Assays=counts[39m
+#> # … with 5 variables: cell <chr>, name <chr>, experiment <chr>, method <chr>,
+#> #   barcode <chr>
 
 # how many rows (genes) and columns (cells) are there in our tidy barnyard?
 dim(tidybarnyard)
@@ -467,6 +467,19 @@ library(coefplot)
 
 # classifiable ~ method
 coefplot(fit1, trans=invlogit) + theme_minimal() 
+#> Warning: `funs()` was deprecated in dplyr 0.8.0.
+#> Please use a list of either functions or lambdas: 
+#> 
+#>   # Simple named list: 
+#>   list(mean = mean, median = median)
+#> 
+#>   # Auto named with `tibble::lst()`: 
+#>   tibble::lst(mean, median)
+#> 
+#>   # Using lambdas
+#>   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 #> Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
 #> use `guide = "none"` instead.
 
@@ -529,6 +542,7 @@ coefplot(fit4, trans=invlogit) + theme_minimal()
 
 Any thoughts on which library prep you'd use if cost is no object? 
 
+
 # Mixture models as an alternative to manual gating
 
 Incidentally, we could also use a mixture model to classify all the points, and 
@@ -543,6 +557,12 @@ automatic gating of actual flow cytometry data this way, in fact, and it works
 # fits a Gaussian mixture model with arbitrary covariance structure and uses 
 # a Bayesian penalization scheme to choose how many components exist in the mix
 library(mclust)
+#>     __  ___________    __  _____________
+#>    /  |/  / ____/ /   / / / / ___/_  __/
+#>   / /|_/ / /   / /   / / / /\__ \ / /   
+#>  / /  / / /___/ /___/ /_/ /___/ // /    
+#> /_/  /_/\____/_____/\____//____//_/    version 5.4.8
+#> Type 'citation("mclust")' for citing this R package in publications.
 
 # since these are proportional values, it makes sense to transform them: 
 mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]), 
@@ -557,6 +577,27 @@ table(mfit$classification) # it turns out that we end up with less human cells
 #>  142 1941 2116
 barnyardtibble$mclass <- factor(mfit$classification)
 
+# plot the results
+p <- ggplot(barnyardtibble, 
+            aes(x=fracmouse, y=frachuman, color=mclass, shape=label)) +
+  xlab("Mouse transcripts expressed") +
+  scale_x_continuous(labels = scales::percent) +
+  ylab("Human transcripts expressed") +
+  scale_y_continuous(labels = scales::percent) +
+  geom_point(alpha=0.5) + 
+  theme_minimal() 
+ 
+# plot it
+p + ggtitle("mixture model fit")
+```
+
+![plot of chunk mixtureModel](figure/mixtureModel-1.png)
+
+It looks like we will need to match up the mixture classes with our labels. 
+
+
+```r
+
 # confusion matrix helps us assign correspondence
 tbl <- with(barnyardtibble, table(mclass, label))
 (mixlabels <- apply(tbl, 2, which.max))
@@ -570,7 +611,11 @@ mixnames <- names(mixlabels)[c(1, 2, 3)] # label by number
 # relabel the mixture assignments: 
 barnyardtibble %>% mutate(mixlabel = mixnames[mclass]) -> barnyardtibble
 
-# add mixture assignments:
+# how did we do? 
+with(barnyardtibble, kable(mixlabel, label))
+#> Error in switch(format, pandoc = "simple", markdown = "pipe", format): EXPR must be a length 1 vector
+
+# add mixture labels to the plot:
 p <- ggplot(barnyardtibble, 
             aes(x=fracmouse, y=frachuman, color=mixlabel, shape=label)) +
   xlab("Mouse transcripts expressed") +
@@ -581,10 +626,10 @@ p <- ggplot(barnyardtibble,
   theme_minimal() 
  
 # plot it
-p + ggtitle("mixture model fit")
+p + ggtitle("mixture model fit with labels")
 ```
 
-![plot of chunk mixtureModel](figure/mixtureModel-1.png)
+![plot of chunk mixlabels](figure/mixlabels-1.png)
 
 Suppose we re-run the regressions using the mixture model fits. What happens?
 
