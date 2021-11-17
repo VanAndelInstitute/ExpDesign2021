@@ -310,13 +310,16 @@ coefplot(fit4, trans=invlogit) + theme_minimal()
 
 
 
-## ---- mixtureModel------------------------------------------------------------
+## ---- loadmclust--------------------------------------------------------------
 
 # one of the greatest software packages ever written, 
 # fits a Gaussian mixture model with arbitrary covariance structure and uses 
 # a Bayesian penalization scheme to choose how many components exist in the mix
 library(mclust)
 
+
+
+## ---- mixtureModel------------------------------------------------------------
 # since these are proportional values, it makes sense to transform them: 
 mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]), 
                verbose=FALSE, G=1:3) # verbose=FALSE to avoid progress bar!
@@ -356,7 +359,7 @@ mixnames <- names(mixlabels)[c(1, 2, 3)] # label by number
 barnyardtibble %>% mutate(mixlabel = mixnames[mclass]) -> barnyardtibble
 
 # how did we do? 
-with(barnyardtibble, kable(mixlabel, label))
+with(barnyardtibble, table(mixlabel, label))
 
 # add mixture labels to the plot:
 p <- ggplot(barnyardtibble, 

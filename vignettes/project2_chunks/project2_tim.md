@@ -108,10 +108,10 @@ a little easier to keep track of what's going on when we subset either one.
 
 # as what is our object masquerading?
 show(tidybarnyard[,0]) # "just show me information about it, with 0 cells"
-#> # A SingleCellExperiment-tibble abstraction: 0 × 5
+#> # A SingleCellExperiment-tibble abstraction: 0 × 7
 #> [90m# Features=62046 | Assays=counts[39m
-#> # … with 5 variables: cell <chr>, name <chr>, experiment <chr>, method <chr>,
-#> #   barcode <chr>
+#> # … with 7 variables: cell <chr>, name <chr>, experiment <chr>, method <chr>,
+#> #   barcode <chr>, fracmouse <dbl>, frachuman <dbl>
 
 # how many rows (genes) and columns (cells) are there in our tidy barnyard?
 dim(tidybarnyard)
@@ -467,19 +467,6 @@ library(coefplot)
 
 # classifiable ~ method
 coefplot(fit1, trans=invlogit) + theme_minimal() 
-#> Warning: `funs()` was deprecated in dplyr 0.8.0.
-#> Please use a list of either functions or lambdas: 
-#> 
-#>   # Simple named list: 
-#>   list(mean = mean, median = median)
-#> 
-#>   # Auto named with `tibble::lst()`: 
-#>   tibble::lst(mean, median)
-#> 
-#>   # Using lambdas
-#>   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
-#> This warning is displayed once every 8 hours.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 #> Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
 #> use `guide = "none"` instead.
 
@@ -550,6 +537,8 @@ in fact that is how I'd usually do it. One of my lab members has been working on
 automatic gating of actual flow cytometry data this way, in fact, and it works
 *great*.  So without further ado... 
 
+<details>
+  <summary>load mclust</summary>
 
 ```r
 
@@ -557,13 +546,11 @@ automatic gating of actual flow cytometry data this way, in fact, and it works
 # fits a Gaussian mixture model with arbitrary covariance structure and uses 
 # a Bayesian penalization scheme to choose how many components exist in the mix
 library(mclust)
-#>     __  ___________    __  _____________
-#>    /  |/  / ____/ /   / / / / ___/_  __/
-#>   / /|_/ / /   / /   / / / /\__ \ / /   
-#>  / /  / / /___/ /___/ /_/ /___/ // /    
-#> /_/  /_/\____/_____/\____//____//_/    version 5.4.8
-#> Type 'citation("mclust")' for citing this R package in publications.
+```
+</details>
 
+
+```r
 # since these are proportional values, it makes sense to transform them: 
 mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]), 
                verbose=FALSE, G=1:3) # verbose=FALSE to avoid progress bar!
@@ -612,8 +599,12 @@ mixnames <- names(mixlabels)[c(1, 2, 3)] # label by number
 barnyardtibble %>% mutate(mixlabel = mixnames[mclass]) -> barnyardtibble
 
 # how did we do? 
-with(barnyardtibble, kable(mixlabel, label))
-#> Error in switch(format, pandoc = "simple", markdown = "pipe", format): EXPR must be a length 1 vector
+with(barnyardtibble, table(mixlabel, label))
+#>          label
+#> mixlabel  human mouse suspect
+#>   human      18     5     119
+#>   mouse       0  1716     225
+#>   suspect  1925     0     191
 
 # add mixture labels to the plot:
 p <- ggplot(barnyardtibble, 
