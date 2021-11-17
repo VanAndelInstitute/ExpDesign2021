@@ -108,10 +108,10 @@ a little easier to keep track of what's going on when we subset either one.
 
 # as what is our object masquerading?
 show(tidybarnyard[,0]) # "just show me information about it, with 0 cells"
-#> # A SingleCellExperiment-tibble abstraction: 0 × 7
-#> [90m# Features=62046 | Assays=counts[39m
-#> # … with 7 variables: cell <chr>, name <chr>, experiment <chr>, method <chr>,
-#> #   barcode <chr>, fracmouse <dbl>, frachuman <dbl>
+#> # A SingleCellExperiment-tibble abstraction: 0 × 8
+#> [90m# Features=62046 | Assays=counts, logcounts[39m
+#> # … with 8 variables: cell <chr>, name <chr>, experiment <chr>, method <chr>,
+#> #   barcode <chr>, sizeFactor <dbl>, fracmouse <dbl>, frachuman <dbl>
 
 # how many rows (genes) and columns (cells) are there in our tidy barnyard?
 dim(tidybarnyard)
@@ -555,9 +555,7 @@ table(mfit$classification) # it turns out that we end up with less human cells
 #> 
 #>    1    2    3 
 #>  142 1941 2116
-barnyardtibble$mclass <- ifelse(mfit$classification == 2, "suspect", 
-                                ifelse(mfit$classification == 1, "human", 
-                                       "mouse")) # not sure how do this tidily.
+barnyardtibble$mclass <- factor(mfit$classification)
 
 # add mixture assignments:
 p <- ggplot(barnyardtibble, 
@@ -580,6 +578,10 @@ Suppose we re-run the regressions using the mixture model fits. What happens?
 
 ```r
 
+# relabel the mixture class calls based on the previous plot
+barnyardtibble %>% mutate(mclass = case_when(mclass == 1 ~ "mouse", 
+                                             mclass == 3 ~ "human", 
+                                             TRUE ~ "suspect"))-> barnyardtibble
 barnyardtibble %>% mutate(mclassifiable = mclass != "suspect") -> barnyardtibble
 
 # null model 

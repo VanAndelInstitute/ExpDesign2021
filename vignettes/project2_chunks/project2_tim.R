@@ -325,9 +325,7 @@ mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]),
 
 # create a new column of the barnyard tibble with the results: 
 table(mfit$classification) # it turns out that we end up with less human cells
-barnyardtibble$mclass <- ifelse(mfit$classification == 2, "suspect", 
-                                ifelse(mfit$classification == 1, "human", 
-                                       "mouse")) # not sure how do this tidily.
+barnyardtibble$mclass <- factor(mfit$classification)
 
 # add mixture assignments:
 p <- ggplot(barnyardtibble, 
@@ -346,6 +344,10 @@ p + ggtitle("mixture model fit")
 
 ## ---- remix-------------------------------------------------------------------
 
+# relabel the mixture class calls based on the previous plot
+barnyardtibble %>% mutate(mclass = case_when(mclass == 1 ~ "mouse", 
+                                             mclass == 3 ~ "human", 
+                                             TRUE ~ "suspect"))-> barnyardtibble
 barnyardtibble %>% mutate(mclassifiable = mclass != "suspect") -> barnyardtibble
 
 # null model 
