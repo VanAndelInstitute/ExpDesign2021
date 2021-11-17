@@ -242,8 +242,10 @@ Often, when someone cracks open a single cell dataset, the first thing they do
 is to cluster the cells (based on whatever approach is fashionable). We don't 
 need to do that here. In fact, if you do plot the usual UMAP'ed clusters, 
 you'll mostly just see a batch effect. This takes a while to compute, so I 
-recommend you not bother with the next chunk. 
+recommend you not bother with the next chunk. I'll drop in a plotly screengrab.
 
+<details>
+  <summary>Only peek if you want to see why UMAP can mislead you</summary>
 
 ```r
 
@@ -265,6 +267,7 @@ tidyUMAP %>%
   )
 
 ```
+</details> 
 
 For this project, we know that the reads from each library (cell) were 
 competitively aligned against the mouse and human genomes. So all we really
