@@ -267,6 +267,8 @@ tidyUMAP %>%
   )
 
 ```
+![UMAP plotly](figure/UMAP.png)
+
 </details> 
 
 For this project, we know that the reads from each library (cell) were 
