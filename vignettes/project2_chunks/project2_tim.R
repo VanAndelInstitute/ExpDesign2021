@@ -34,6 +34,17 @@ if (!exists("tidybarnyard")) {
 }
 
 
+## ---- tidyfix-----------------------------------------------------------------
+
+# if any column in `tidybarnyard` column data is named `cell`, rename it 
+# this is currently a bug in tidySingleCellExperiment:
+# https://github.com/stemangiola/tidySingleCellExperiment/issues/38
+#
+names(colData(tidybarnyard)) <- sub("cell",                       # pattern
+                                    "barcode",                    # replacement
+                                    names(colData(tidybarnyard))) # strings 
+
+
 ## ---- rowDataAndColumnData----------------------------------------------------
 
 # as what is our object masquerading?

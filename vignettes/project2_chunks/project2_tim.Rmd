@@ -106,8 +106,22 @@ us some tools to stay in the Tidyverse as much as possible while working with
 single-cell data. (It turns out that the underlying data makes this somewhat 
 less trivial than you might expect. Fortunately, you don't have to care.) 
 
-Concretely, let's see how these moving parts fit together. The `dim` function
-provides dimensions for a rectangular object, rows x columns, which makes it 
+There is a [little annoyance in _tidySingleCellExperiment_](https://github.com/stemangiola/tidySingleCellExperiment/issues/38) that we need to side-step to move along. Just to be sure, let's fix this and make sure we don't hit it later on:
+
+```{r, tidyfix}
+
+# if any column in `tidybarnyard` column data is named `cell`, rename it 
+# this is currently a bug in tidySingleCellExperiment:
+# https://github.com/stemangiola/tidySingleCellExperiment/issues/38
+#
+names(colData(tidybarnyard)) <- sub("cell",                       # pattern
+                                    "barcode",                    # replacement
+                                    names(colData(tidybarnyard))) # strings 
+```
+
+Now, let's see how these moving parts in the figure fit together, from the
+ground up.  We will make use of the `dim` function, which provides dimensions
+for a rectangular object in the form rows x columns. This will also make it 
 a little easier to keep track of what's going on when we subset either one. 
 
 ```{r, rowDataAndColumnData }

@@ -44,112 +44,14 @@ if (!require("SingleCellExperiment")) {
   BiocManager::install("SingleCellExperiment")
   library(SingleCellExperiment)
 }
-#> Loading required package: SingleCellExperiment
-#> Loading required package: SummarizedExperiment
-#> Loading required package: MatrixGenerics
-#> Loading required package: matrixStats
-#> 
-#> Attaching package: 'MatrixGenerics'
-#> The following objects are masked from 'package:matrixStats':
-#> 
-#>     colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
-#>     colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
-#>     colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
-#>     colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
-#>     colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
-#>     colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
-#>     colWeightedMeans, colWeightedMedians, colWeightedSds,
-#>     colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
-#>     rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
-#>     rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
-#>     rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
-#>     rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
-#>     rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
-#>     rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
-#>     rowWeightedSds, rowWeightedVars
-#> Loading required package: GenomicRanges
-#> Loading required package: stats4
-#> Loading required package: BiocGenerics
-#> 
-#> Attaching package: 'BiocGenerics'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     IQR, mad, sd, var, xtabs
-#> The following objects are masked from 'package:base':
-#> 
-#>     anyDuplicated, append, as.data.frame, basename, cbind, colnames,
-#>     dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
-#>     grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
-#>     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
-#>     rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
-#>     union, unique, unsplit, which.max, which.min
-#> Loading required package: S4Vectors
-#> 
-#> Attaching package: 'S4Vectors'
-#> The following objects are masked from 'package:base':
-#> 
-#>     expand.grid, I, unname
-#> Loading required package: IRanges
-#> Loading required package: GenomeInfoDb
-#> Loading required package: Biobase
-#> Welcome to Bioconductor
-#> 
-#>     Vignettes contain introductory material; view with
-#>     'browseVignettes()'. To cite Bioconductor, see
-#>     'citation("Biobase")', and for packages 'citation("pkgname")'.
-#> 
-#> Attaching package: 'Biobase'
-#> The following object is masked from 'package:MatrixGenerics':
-#> 
-#>     rowMedians
-#> The following objects are masked from 'package:matrixStats':
-#> 
-#>     anyMissing, rowMedians
 if (!require("tidySingleCellExperiment")) {
   BiocManager::install("tidySingleCellExperiment")
   library(tidySingleCellExperiment)
 }
-#> Loading required package: tidySingleCellExperiment
-#> 
-#> Attaching package: 'tidySingleCellExperiment'
-#> The following object is masked from 'package:IRanges':
-#> 
-#>     slice
-#> The following object is masked from 'package:S4Vectors':
-#> 
-#>     rename
-#> The following object is masked from 'package:matrixStats':
-#> 
-#>     count
-#> The following object is masked from 'package:stats':
-#> 
-#>     filter
 if (!require("tidyverse")) {
   BiocManager::install("tidyverse")
   library(tidyverse)
 }
-#> Loading required package: tidyverse
-#> ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
-#> ✔ ggplot2 3.3.5     ✔ purrr   0.3.4
-#> ✔ tibble  3.1.6     ✔ dplyr   1.0.7
-#> ✔ tidyr   1.1.4     ✔ stringr 1.4.0
-#> ✔ readr   2.1.0     ✔ forcats 0.5.1
-#> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-#> ✖ dplyr::add_count()  masks tidySingleCellExperiment::add_count()
-#> ✖ dplyr::bind_cols()  masks tidySingleCellExperiment::bind_cols()
-#> ✖ dplyr::bind_rows()  masks tidySingleCellExperiment::bind_rows()
-#> ✖ dplyr::collapse()   masks IRanges::collapse()
-#> ✖ dplyr::combine()    masks Biobase::combine(), BiocGenerics::combine()
-#> ✖ dplyr::count()      masks tidySingleCellExperiment::count(), matrixStats::count()
-#> ✖ dplyr::desc()       masks IRanges::desc()
-#> ✖ tidyr::expand()     masks S4Vectors::expand()
-#> ✖ dplyr::filter()     masks tidySingleCellExperiment::filter(), stats::filter()
-#> ✖ dplyr::first()      masks S4Vectors::first()
-#> ✖ dplyr::lag()        masks stats::lag()
-#> ✖ ggplot2::Position() masks BiocGenerics::Position(), base::Position()
-#> ✖ purrr::reduce()     masks GenomicRanges::reduce(), IRanges::reduce()
-#> ✖ dplyr::rename()     masks tidySingleCellExperiment::rename(), S4Vectors::rename()
-#> ✖ dplyr::slice()      masks tidySingleCellExperiment::slice(), IRanges::slice()
 ```
 </details>
 
@@ -201,8 +103,23 @@ us some tools to stay in the Tidyverse as much as possible while working with
 single-cell data. (It turns out that the underlying data makes this somewhat 
 less trivial than you might expect. Fortunately, you don't have to care.) 
 
-Concretely, let's see how these moving parts fit together. The `dim` function
-provides dimensions for a rectangular object, rows x columns, which makes it 
+There is a [little annoyance in _tidySingleCellExperiment_](https://github.com/stemangiola/tidySingleCellExperiment/issues/38) that we need to side-step to move along. Just to be sure, let's fix this and make sure we don't hit it later on:
+
+
+```r
+
+# if any column in `tidybarnyard` column data is named `cell`, rename it 
+# this is currently a bug in tidySingleCellExperiment:
+# https://github.com/stemangiola/tidySingleCellExperiment/issues/38
+#
+names(colData(tidybarnyard)) <- sub("cell",                       # pattern
+                                    "barcode",                    # replacement
+                                    names(colData(tidybarnyard))) # strings 
+```
+
+Now, let's see how these moving parts in the figure fit together, from the
+ground up.  We will make use of the `dim` function, which provides dimensions
+for a rectangular object in the form rows x columns. This will also make it 
 a little easier to keep track of what's going on when we subset either one. 
 
 
@@ -210,10 +127,10 @@ a little easier to keep track of what's going on when we subset either one.
 
 # as what is our object masquerading?
 show(tidybarnyard[,0]) # "just show me information about it, with 0 cells"
-#> # A SingleCellExperiment-tibble abstraction: 0 × 5
+#> # A SingleCellExperiment-tibble abstraction: 0 × 7
 #> [90m# Features=62046 | Assays=counts[39m
-#> # … with 5 variables: cell <chr>, name <chr>, experiment <chr>, method <chr>,
-#> #   barcode <chr>
+#> # … with 7 variables: cell <chr>, name <chr>, experiment <chr>, method <chr>,
+#> #   barcode <chr>, fracmouse <dbl>, frachuman <dbl>
 
 # how many rows (genes) and columns (cells) are there in our tidy barnyard?
 dim(tidybarnyard)
@@ -265,7 +182,7 @@ as_tibble(tidybarnyard) %>%           # "turn the colData into a tibble"
 
 # your cell:
 show(aCell) 
-#> [1] "Mixture1.inDrops.ATGCGGAG-TATCCTCT-GATTTACC"
+#> [1] "Mixture1.inDrops.CAGATGGG-TATCCTCT-AGTTTAGA"
 
 # does that mean we can ask for a random gene with certain attributes?
 as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
@@ -275,7 +192,7 @@ as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
 
 # your gene:
 show(aGene) 
-#> [1] "mm10_ENSMUSG00000095493_mm10_A630023A22Rik"
+#> [1] "mm10_ENSMUSG00000034648_mm10_Lrrn1"
 
 # how many copies of this random gene were found in this random cell? 
 counts(tidybarnyard)[aGene, aCell] 
@@ -283,14 +200,6 @@ counts(tidybarnyard)[aGene, aCell]
 
 # note that the odds are good that you'll get a 0 for this random combination:
 library(Matrix)                                 # for the `nnzero` function 
-#> 
-#> Attaching package: 'Matrix'
-#> The following objects are masked from 'package:tidyr':
-#> 
-#>     expand, pack, unpack
-#> The following object is masked from 'package:S4Vectors':
-#> 
-#>     expand
 sparsity <- 1 - (nnzero(counts(tidybarnyard)) / # number of nonzero counts
                  prod(dim(tidybarnyard)))       # number of rows * columns 
 
@@ -313,7 +222,7 @@ samples <- (length(aHundredCells) * length(aHundredGenes))
 nonzero <- nnzero(counts(tidybarnyard)[aHundredGenes, aHundredCells])
 sparsity_hat <- (samples - nonzero) / samples 
 sparsity_hat # estimated sparsity
-#> [1] 0.9239
+#> [1] 0.937
 
 # In fact, we can use this scheme to look at sampling error:
 sample_sparsity <- function(object, cells=100, genes=100) { 
@@ -577,19 +486,6 @@ library(coefplot)
 
 # classifiable ~ method
 coefplot(fit1, trans=invlogit) + theme_minimal() 
-#> Warning: `funs()` was deprecated in dplyr 0.8.0.
-#> Please use a list of either functions or lambdas: 
-#> 
-#>   # Simple named list: 
-#>   list(mean = mean, median = median)
-#> 
-#>   # Auto named with `tibble::lst()`: 
-#>   tibble::lst(mean, median)
-#> 
-#>   # Using lambdas
-#>   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
-#> This warning is displayed once every 8 hours.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 #> Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
 #> use `guide = "none"` instead.
 
@@ -669,17 +565,6 @@ automatic gating of actual flow cytometry data this way, in fact, and it works
 # fits a Gaussian mixture model with arbitrary covariance structure and uses 
 # a Bayesian penalization scheme to choose how many components exist in the mix
 library(mclust)
-#>     __  ___________    __  _____________
-#>    /  |/  / ____/ /   / / / / ___/_  __/
-#>   / /|_/ / /   / /   / / / /\__ \ / /   
-#>  / /  / / /___/ /___/ /_/ /___/ // /    
-#> /_/  /_/\____/_____/\____//____//_/    version 5.4.8
-#> Type 'citation("mclust")' for citing this R package in publications.
-#> 
-#> Attaching package: 'mclust'
-#> The following object is masked from 'package:purrr':
-#> 
-#>     map
 ```
 </details>
 
@@ -700,7 +585,7 @@ mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]),
 table(mfit$classification) # it turns out that we end up with less human cells
 #> 
 #>    1    2    3 
-#> 2124 1941  134
+#> 2116 1941  142
 barnyardtibble$mclass <- factor(mfit$classification)
 
 # plot the results
@@ -740,17 +625,17 @@ barnyardtibble %>%
 with(barnyardtibble, table(mixlabel, label))
 #>          label
 #> mixlabel  human mouse suspect
-#>   human    1927     0     197
+#>   human    1925     0     191
 #>   mouse       0  1716     225
-#>   suspect    16     5     113
+#>   suspect    18     5     119
 
 # specifically, do we label all the human and mouse cells confidently?
 with(barnyardtibble, table(mixlabel, label))[, c("human", "mouse")]
 #>          label
 #> mixlabel  human mouse
-#>   human    1927     0
+#>   human    1925     0
 #>   mouse       0  1716
-#>   suspect    16     5
+#>   suspect    18     5
 ```
 
 How did we do? 
