@@ -38,7 +38,8 @@ i.e., the ability to classify a cell confidently.  For that, we need cutoffs.
 With the release of Bioconductor 3.14, the project includes a tidy single cell 
 experiment (data structure) package, which is great since all other single cell 
 data structures kind of suck. (No, seriously, you'll find out why eventually.) 
-The package is, not coincidentally, called [tidySingleCellExperiment](http://www.bioconductor.org/packages/release/bioc/vignettes/tidySingleCellExperiment/inst/doc/introduction.html):
+The package is, not coincidentally, called [tidySingleCellExperiment](http://www.bioconductor.org/packages/release/bioc/vignettes/tidySingleCellExperiment/inst/doc/introduction.html). The linked instructions are helpful; read them when you
+have a chance. Meanwhile, let's make sure we can load it in this analysis. 
 
 <details>
   <summary>Make sure necessary packages are installed</summary>

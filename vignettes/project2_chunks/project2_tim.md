@@ -33,7 +33,8 @@ i.e., the ability to classify a cell confidently.  For that, we need cutoffs.
 With the release of Bioconductor 3.14, the project includes a tidy single cell 
 experiment (data structure) package, which is great since all other single cell 
 data structures kind of suck. (No, seriously, you'll find out why eventually.) 
-The package is, not coincidentally, called [tidySingleCellExperiment](http://www.bioconductor.org/packages/release/bioc/vignettes/tidySingleCellExperiment/inst/doc/introduction.html):
+The package is, not coincidentally, called [tidySingleCellExperiment](http://www.bioconductor.org/packages/release/bioc/vignettes/tidySingleCellExperiment/inst/doc/introduction.html). The linked instructions are helpful; read them when you
+have a chance. Meanwhile, let's make sure we can load it in this analysis. 
 
 <details>
   <summary>Make sure necessary packages are installed</summary>
@@ -182,7 +183,7 @@ as_tibble(tidybarnyard) %>%           # "turn the colData into a tibble"
 
 # your cell:
 show(aCell) 
-#> [1] "Mixture2.inDrops.GTGCCCAT-AGAATGCG-CGTATCGG"
+#> [1] "Mixture2.inDrops.CAAGGAAT-AAGAGCGT-TAAGACGG"
 
 # does that mean we can ask for a random gene with certain attributes?
 as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
@@ -192,7 +193,7 @@ as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
 
 # your gene:
 show(aGene) 
-#> [1] "mm10_ENSMUSG00000107705_mm10_Umad1"
+#> [1] "mm10_ENSMUSG00000000881_mm10_Dlg3"
 
 # how many copies of this random gene were found in this random cell? 
 counts(tidybarnyard)[aGene, aCell] 
@@ -222,7 +223,7 @@ samples <- (length(aHundredCells) * length(aHundredGenes))
 nonzero <- nnzero(counts(tidybarnyard)[aHundredGenes, aHundredCells])
 sparsity_hat <- (samples - nonzero) / samples 
 sparsity_hat # estimated sparsity
-#> [1] 0.9112
+#> [1] 0.932
 
 # In fact, we can use this scheme to look at sampling error:
 sample_sparsity <- function(object, cells=100, genes=100) { 
@@ -585,7 +586,7 @@ mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]),
 table(mfit$classification) # it turns out that we end up with less human cells
 #> 
 #>    1    2    3 
-#> 1941  142 2116
+#>  142 2116 1941
 barnyardtibble$mclass <- factor(mfit$classification)
 
 # plot the results
