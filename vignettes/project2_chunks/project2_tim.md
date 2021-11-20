@@ -285,7 +285,7 @@ as_tibble(tidybarnyard) %>%           # "turn the colData into a tibble"
 
 # your cell:
 show(aCell) 
-#> [1] "Mixture2.inDrops.GTTCTGCT-AAGAGCGT-TAACCATC"
+#> [1] "Mixture1.inDrops.CAGATGGG-TATCCTCT-AGTTTAGA"
 
 # does that mean we can ask for a random gene with certain attributes?
 as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
@@ -295,7 +295,7 @@ as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
 
 # your gene:
 show(aGene) 
-#> [1] "mm10_ENSMUSG00000030061_mm10_Uba3"
+#> [1] "mm10_ENSMUSG00000095706_mm10_Olfr209"
 
 # how many copies of this random gene were found in this random cell? 
 counts(tidybarnyard)[aGene, aCell]    # UMI counts for a given [gene, cell]. 
@@ -333,7 +333,7 @@ samples <- (length(aHundredCells) * length(aHundredGenes))
 nonzero <- nnzero(counts(tidybarnyard)[aHundredGenes, aHundredCells])
 sparsity_hat <- (samples - nonzero) / samples 
 sparsity_hat # estimated sparsity
-#> [1] 0.9239
+#> [1] 0.9301
 
 # In fact, we can use this scheme to look at sampling error:
 sample_sparsity <- function(object, cells=100, genes=100) { 
@@ -721,7 +721,7 @@ mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]),
 table(mfit$classification) # it turns out that we end up with less human cells
 #> 
 #>    1    2    3 
-#> 1114 1106 1979
+#> 1941 2116  142
 barnyardtibble$mclass <- factor(mfit$classification)
 
 # plot the results
@@ -761,17 +761,17 @@ barnyardtibble %>%
 with(barnyardtibble, table(mixlabel, label))
 #>          label
 #> mixlabel  human mouse suspect
-#>   human    1076     0      30
-#>   mouse       0  1721     258
-#>   suspect   867     0     247
+#>   human    1925     0     191
+#>   mouse       0  1716     225
+#>   suspect    18     5     119
 
 # specifically, do we label all the human and mouse cells confidently?
 with(barnyardtibble, table(mixlabel, label))[, c("human", "mouse")]
 #>          label
 #> mixlabel  human mouse
-#>   human    1076     0
-#>   mouse       0  1721
-#>   suspect   867     0
+#>   human    1925     0
+#>   mouse       0  1716
+#>   suspect    18     5
 ```
 
 How did we do? 
@@ -967,7 +967,7 @@ library(ggforce)
 
 # for better resolution, you could resample batches of 500, 1000, ... 
 results %>% 
-#  mutate(method = fct_reorder(method, desc(success), .fun='median')) %>% 
+  mutate(method = fct_reorder(method, desc(success), .fun='median')) %>% 
   ggplot(aes(method, success, color=method)) + 
             scale_y_continuous(labels = scales::label_percent()) + 
             ylab("classification performance") +
@@ -979,10 +979,10 @@ results %>%
 
 ![plot of chunk sinaplot](figure/sinaplot-1.png)
 
-_Question:_ I commented out a line in the plot above. Would it make it clearer?
+_Question:_ What does `fct_reorder` (from the `forcats` package) do above?
 
 You might conclude that we could directly compute confidence intervals from the 
-above results. You would be correct. Let's do this in a tidy-ish fashion:
+above results. You would be correct. Let's do this tidily:
 
 
 ```r

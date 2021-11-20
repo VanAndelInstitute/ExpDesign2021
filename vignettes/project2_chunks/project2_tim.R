@@ -506,7 +506,7 @@ library(ggforce)
 
 # for better resolution, you could resample batches of 500, 1000, ... 
 results %>% 
-#  mutate(method = fct_reorder(method, desc(success), .fun='median')) %>% 
+  mutate(method = fct_reorder(method, desc(success), .fun='median')) %>% 
   ggplot(aes(method, success, color=method)) + 
             scale_y_continuous(labels = scales::label_percent()) + 
             ylab("classification performance") +

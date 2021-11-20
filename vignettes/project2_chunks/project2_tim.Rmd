@@ -688,7 +688,7 @@ library(ggforce)
 
 # for better resolution, you could resample batches of 500, 1000, ... 
 results %>% 
-#  mutate(method = fct_reorder(method, desc(success), .fun='median')) %>% 
+  mutate(method = fct_reorder(method, desc(success), .fun='median')) %>% 
   ggplot(aes(method, success, color=method)) + 
             scale_y_continuous(labels = scales::label_percent()) + 
             ylab("classification performance") +
@@ -699,10 +699,10 @@ results %>%
 
 ```
 
-_Question:_ I commented out a line in the plot above. Would it make it clearer?
+_Question:_ What does `fct_reorder` (from the `forcats` package) do above?
 
 You might conclude that we could directly compute confidence intervals from the 
-above results. You would be correct. Let's do this in a tidy-ish fashion:
+above results. You would be correct. Let's do this tidily:
 
 ```{r, confidenceintervals}
 
