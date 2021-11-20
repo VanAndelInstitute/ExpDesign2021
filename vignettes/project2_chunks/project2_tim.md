@@ -182,7 +182,7 @@ as_tibble(tidybarnyard) %>%           # "turn the colData into a tibble"
 
 # your cell:
 show(aCell) 
-#> [1] "Mixture1.inDrops.CAGATGGG-TATCCTCT-AGTTTAGA"
+#> [1] "Mixture2.inDrops.CTGAGCGT-AGAATGCG-CCTACTAG"
 
 # does that mean we can ask for a random gene with certain attributes?
 as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
@@ -192,7 +192,7 @@ as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
 
 # your gene:
 show(aGene) 
-#> [1] "mm10_ENSMUSG00000034648_mm10_Lrrn1"
+#> [1] "mm10_ENSMUSG00000045268_mm10_Zfp691"
 
 # how many copies of this random gene were found in this random cell? 
 counts(tidybarnyard)[aGene, aCell] 
@@ -222,7 +222,7 @@ samples <- (length(aHundredCells) * length(aHundredGenes))
 nonzero <- nnzero(counts(tidybarnyard)[aHundredGenes, aHundredCells])
 sparsity_hat <- (samples - nonzero) / samples 
 sparsity_hat # estimated sparsity
-#> [1] 0.937
+#> [1] 0.9225
 
 # In fact, we can use this scheme to look at sampling error:
 sample_sparsity <- function(object, cells=100, genes=100) { 
@@ -585,7 +585,7 @@ mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]),
 table(mfit$classification) # it turns out that we end up with less human cells
 #> 
 #>    1    2    3 
-#> 2116 1941  142
+#> 1941 2116  142
 barnyardtibble$mclass <- factor(mfit$classification)
 
 # plot the results
@@ -983,9 +983,7 @@ One tradeoff that most people (including myself) are rarely equipped to navigate
 by intuition is what test or method to use. So don't: let the data tell you. And
 absolutely do include some positive and negative controls in your experiments, 
 whether they are _in vitro_, _in vivo_, or _in silico_. This is particularly 
-important when evaluating new and/or fashionable techniques: 
-
-[The state of the art in single-cell batch correction benchmarking](https://www.biorxiv.org/content/10.1101/2021.11.15.468733v1.full)
+important when [evaluating new and/or fashionable techniques](https://www.biorxiv.org/content/10.1101/2021.11.15.468733v1.full).
 
 _Question:_ Can you think of a way to include some negative controls in this 
 experiment? We know that there are empty droplets in many methods, and we know
@@ -999,11 +997,10 @@ Specifically, suppose you coded up the human and mouse cells (or the cell types
 you actually cared about) with batch (HTO, hash-tag oligo) labels, like in the 
 'S' column of the matrix above.  (Think of it as a great big tibble, and think
 of the pieces of the big matrix as alternative assays.)  Further, the protein 
-tags would help quite a bit if you think there really are expressed differences
-within the usual cell subtypes (perhaps the ones you labeled with the hashtags).
+tags could help quite a bit if you think there really are expressed differences
+within the usual cell subtypes.
 
-_Question_: Now can you think of a way to devise positive and negative controls
-that doesn't depend upon consensus or what anyone else thinks? 
+_Question_: Can you use this to devise positive and negative controls in a way that makes biological sense?
 
 Congratulations, now you're even a little beyond the state of the published art.
 Apologies if Scott or I gave you the impression that [most published research is
