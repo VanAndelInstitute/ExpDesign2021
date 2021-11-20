@@ -681,7 +681,7 @@ results <- bind_rows(runs)
 
 Per usual, it helps to plot the results.
 
-```{r, sinaplot}
+```{r, ordered_sinaplot}
 
 # fire up geom_sina because it rules:
 library(ggforce)
@@ -737,8 +737,13 @@ CIs %>%
 
 _Question (not required)_: Can you overlay the two summaries above? (I can't.)
 
-_Question (not required)_: Is this also feasible for each combination of 
-(mixture, method)? If so, how would you structure your resampling scheme?
+_Question (not required)_: Is it feasible to block on experiment x method?
+
+_Question (not required)_: How could you structure a scheme for the above?
+
+(Note that I might ask you to do something very much like this in project 3...)
+
+# An equivalence between hypothesis tests and confidence intervals 
 
 Perhaps you've previously been told that it is not possible to exclude the 
 possibility that two groups (or groups of samples) are equivalent at the 5% 
@@ -747,7 +752,7 @@ since inverting a test at a given alpha is equivalent to computing a (1-alpha)%
 confidence interval. Congratulations, you just computed all marginal comparisons
 for these methods at a significance level of 0.05. 
 
-_Question:_ What happens if you take bigger samples, or more of them?
+_Question:_ What happens if you take bigger samples, or more of them, or both?
 
 Suppose we went back to the original dataset (or, for the sake of argument, a 
 larger dataset) and resampled the hell out of it. At some point, do you suppose

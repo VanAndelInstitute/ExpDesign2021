@@ -499,7 +499,7 @@ results <- bind_rows(runs)
 
 
 
-## ---- sinaplot----------------------------------------------------------------
+## ---- ordered_sinaplot--------------------------------------------------------
 
 # fire up geom_sina because it rules:
 library(ggforce)

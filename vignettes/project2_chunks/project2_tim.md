@@ -285,7 +285,7 @@ as_tibble(tidybarnyard) %>%           # "turn the colData into a tibble"
 
 # your cell:
 show(aCell) 
-#> [1] "Mixture1.inDrops.CAGATGGG-TATCCTCT-AGTTTAGA"
+#> [1] "Mixture1.inDrops.ATTGAAGT-CTCTCTAT-CACAACAG"
 
 # does that mean we can ask for a random gene with certain attributes?
 as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
@@ -295,7 +295,7 @@ as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
 
 # your gene:
 show(aGene) 
-#> [1] "mm10_ENSMUSG00000095706_mm10_Olfr209"
+#> [1] "mm10_ENSMUSG00000090191_mm10_9230105E05Rik"
 
 # how many copies of this random gene were found in this random cell? 
 counts(tidybarnyard)[aGene, aCell]    # UMI counts for a given [gene, cell]. 
@@ -333,7 +333,7 @@ samples <- (length(aHundredCells) * length(aHundredGenes))
 nonzero <- nnzero(counts(tidybarnyard)[aHundredGenes, aHundredCells])
 sparsity_hat <- (samples - nonzero) / samples 
 sparsity_hat # estimated sparsity
-#> [1] 0.9301
+#> [1] 0.9302
 
 # In fact, we can use this scheme to look at sampling error:
 sample_sparsity <- function(object, cells=100, genes=100) { 
@@ -721,7 +721,7 @@ mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]),
 table(mfit$classification) # it turns out that we end up with less human cells
 #> 
 #>    1    2    3 
-#> 1941 2116  142
+#> 2156  113 1930
 barnyardtibble$mclass <- factor(mfit$classification)
 
 # plot the results
@@ -761,17 +761,17 @@ barnyardtibble %>%
 with(barnyardtibble, table(mixlabel, label))
 #>          label
 #> mixlabel  human mouse suspect
-#>   human    1925     0     191
-#>   mouse       0  1716     225
-#>   suspect    18     5     119
+#>   human    1932     0     224
+#>   mouse       0  1712     218
+#>   suspect    11     9      93
 
 # specifically, do we label all the human and mouse cells confidently?
 with(barnyardtibble, table(mixlabel, label))[, c("human", "mouse")]
 #>          label
 #> mixlabel  human mouse
-#>   human    1925     0
-#>   mouse       0  1716
-#>   suspect    18     5
+#>   human    1932     0
+#>   mouse       0  1712
+#>   suspect    11     9
 ```
 
 How did we do? 
@@ -977,7 +977,7 @@ results %>%
             ggtitle("Cell classification results by prep, 200 cells apiece")
 ```
 
-![plot of chunk sinaplot](figure/sinaplot-1.png)
+![plot of chunk ordered_sinaplot](figure/ordered_sinaplot-1.png)
 
 _Question:_ What does `fct_reorder` (from the `forcats` package) do above?
 
@@ -1019,8 +1019,13 @@ CIs %>%
 
 _Question (not required)_: Can you overlay the two summaries above? (I can't.)
 
-_Question (not required)_: Is this also feasible for each combination of 
-(mixture, method)? If so, how would you structure your resampling scheme?
+_Question (not required)_: Is it feasible to block on experiment x method?
+
+_Question (not required)_: How could you structure a scheme for the above?
+
+(Note that I might ask you to do something very much like this in project 3...)
+
+# An equivalence between hypothesis tests and confidence intervals 
 
 Perhaps you've previously been told that it is not possible to exclude the 
 possibility that two groups (or groups of samples) are equivalent at the 5% 
@@ -1029,7 +1034,7 @@ since inverting a test at a given alpha is equivalent to computing a (1-alpha)%
 confidence interval. Congratulations, you just computed all marginal comparisons
 for these methods at a significance level of 0.05. 
 
-_Question:_ What happens if you take bigger samples, or more of them?
+_Question:_ What happens if you take bigger samples, or more of them, or both?
 
 Suppose we went back to the original dataset (or, for the sake of argument, a 
 larger dataset) and resampled the hell out of it. At some point, do you suppose
