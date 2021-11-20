@@ -61,7 +61,7 @@ identical(dim(tidybarnyard),
 identical(dim(tidybarnyard), dim(assay(tidybarnyard)))
 
 # there is a shortcut for the `counts` assay, since it's so common:
-counts(tidybarnyard)[1:3, 1:3]
+counts(tidybarnyard)[1:3, 1:3] # this holds the UMI counts, or a `.` for 0.
 
 # does each row (gene) in the object have a corresponding rowData() row?
 identical(rownames(tidybarnyard), rownames(rowData(tidybarnyard)))
@@ -92,7 +92,7 @@ as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
 show(aGene) 
 
 # how many copies of this random gene were found in this random cell? 
-counts(tidybarnyard)[aGene, aCell] 
+counts(tidybarnyard)[aGene, aCell]    # UMI counts for a given [gene, cell]. 
 
 # note that the odds are good that you'll get a 0 for this random combination:
 library(Matrix)                                 # for the `nnzero` function 

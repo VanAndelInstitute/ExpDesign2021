@@ -26,7 +26,7 @@ you will recall, is tested for significance using a marginal t-test), we can
 rely upon a generalized version of residual variance called [deviance]("https://en.wikipedia.org/wiki/Deviance_(statistics) "Wikipedia page for deviance") to 
 let us answer ANOVA-style questions: "how much variability is explained by a
 particular factor in the model?" First we need to set up our response variable, 
-i.e., the ability to classify a cell confidently.  For that, we need cutoffs. 
+i.e., the ability to classify a cell confidently. For that, we need labels. 
 
 # tidySingleCellExperiment
 
@@ -122,6 +122,10 @@ Now, let's see how these moving parts in the figure fit together, from the
 ground up.  We will make use of the `dim` function, which provides dimensions
 for a rectangular object in the form rows x columns. This will also make it 
 a little easier to keep track of what's going on when we subset either one. 
+To avoid the document becoming absurdly large, we'll fold it up; 
+
+<details>
+  <summary>click to open it back up.</summary>
 
 
 ```r
@@ -147,7 +151,7 @@ identical(dim(tidybarnyard), dim(assay(tidybarnyard)))
 #> [1] TRUE
 
 # there is a shortcut for the `counts` assay, since it's so common:
-counts(tidybarnyard)[1:3, 1:3]
+counts(tidybarnyard)[1:3, 1:3] # this holds the UMI counts, or a `.` for 0.
 #> 3 x 3 sparse Matrix of class "dgCMatrix"
 #>                                  Mixture1.10x-Chromium-v2.GGGCATCGTCACACGC
 #> hg19_ENSG00000000003_hg19_TSPAN6                                         1
@@ -183,7 +187,7 @@ as_tibble(tidybarnyard) %>%           # "turn the colData into a tibble"
 
 # your cell:
 show(aCell) 
-#> [1] "Mixture2.inDrops.CAAGGAAT-AAGAGCGT-TAAGACGG"
+#> [1] "Mixture2.inDrops.TAATGTGG-AAGAGCGT-CGGGTAGT"
 
 # does that mean we can ask for a random gene with certain attributes?
 as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
@@ -193,10 +197,10 @@ as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
 
 # your gene:
 show(aGene) 
-#> [1] "mm10_ENSMUSG00000000881_mm10_Dlg3"
+#> [1] "mm10_ENSMUSG00000027349_mm10_Fam98b"
 
 # how many copies of this random gene were found in this random cell? 
-counts(tidybarnyard)[aGene, aCell] 
+counts(tidybarnyard)[aGene, aCell]    # UMI counts for a given [gene, cell]. 
 #> [1] 0
 
 # note that the odds are good that you'll get a 0 for this random combination:
@@ -223,7 +227,7 @@ samples <- (length(aHundredCells) * length(aHundredGenes))
 nonzero <- nnzero(counts(tidybarnyard)[aHundredGenes, aHundredCells])
 sparsity_hat <- (samples - nonzero) / samples 
 sparsity_hat # estimated sparsity
-#> [1] 0.932
+#> [1] 0.9255
 
 # In fact, we can use this scheme to look at sampling error:
 sample_sparsity <- function(object, cells=100, genes=100) { 
@@ -257,6 +261,7 @@ ggplot(tibble(estimate=estimates), aes(estimate)) +
 # the Central Limit Theorem lives to fight another day,
 # and we have a decent idea of how to navigate our data.
 ```
+</details>
 
 Often, when someone cracks open a single cell dataset, the first thing they do
 is to cluster the cells (based on whatever approach is fashionable). We don't 
@@ -586,7 +591,7 @@ mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]),
 table(mfit$classification) # it turns out that we end up with less human cells
 #> 
 #>    1    2    3 
-#>  142 2116 1941
+#> 1941  142 2116
 barnyardtibble$mclass <- factor(mfit$classification)
 
 # plot the results
