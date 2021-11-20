@@ -490,10 +490,11 @@ names(subsamples) <- paste0("run", seq_along(subsamples))
 # purrr::map maps a function over a list
 library(purrr)
 
-# evaluate performance across 100 bootstrap samples of 100 cells per method
+# evaluate performance with 200 bootstrap samples of (ideally) 200 cells/method
+# (i.e. subsamples <- replicate(n=200, sample_umis(..., ideal=200, ...)), above)
 runs <- purrr::map(subsamples, performance_by_method, atibble=barnyardtibble)
 
-# for plotting, stack them
+# for plotting, stack them row-by-row
 results <- bind_rows(runs) 
 
 

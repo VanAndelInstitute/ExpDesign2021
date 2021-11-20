@@ -285,7 +285,7 @@ as_tibble(tidybarnyard) %>%           # "turn the colData into a tibble"
 
 # your cell:
 show(aCell) 
-#> [1] "Mixture2.inDrops.CCAGACAG-AAGAGCGT-CATCGCAG"
+#> [1] "Mixture2.inDrops.GTTCTGCT-AAGAGCGT-TAACCATC"
 
 # does that mean we can ask for a random gene with certain attributes?
 as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
@@ -295,7 +295,7 @@ as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
 
 # your gene:
 show(aGene) 
-#> [1] "mm10_ENSMUSG00000058318_mm10_Phf21a"
+#> [1] "mm10_ENSMUSG00000030061_mm10_Uba3"
 
 # how many copies of this random gene were found in this random cell? 
 counts(tidybarnyard)[aGene, aCell]    # UMI counts for a given [gene, cell]. 
@@ -333,7 +333,7 @@ samples <- (length(aHundredCells) * length(aHundredGenes))
 nonzero <- nnzero(counts(tidybarnyard)[aHundredGenes, aHundredCells])
 sparsity_hat <- (samples - nonzero) / samples 
 sparsity_hat # estimated sparsity
-#> [1] 0.9099
+#> [1] 0.9239
 
 # In fact, we can use this scheme to look at sampling error:
 sample_sparsity <- function(object, cells=100, genes=100) { 
@@ -721,7 +721,7 @@ mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]),
 table(mfit$classification) # it turns out that we end up with less human cells
 #> 
 #>    1    2    3 
-#> 1941  142 2116
+#> 1114 1106 1979
 barnyardtibble$mclass <- factor(mfit$classification)
 
 # plot the results
@@ -761,17 +761,17 @@ barnyardtibble %>%
 with(barnyardtibble, table(mixlabel, label))
 #>          label
 #> mixlabel  human mouse suspect
-#>   human    1925     0     191
-#>   mouse       0  1716     225
-#>   suspect    18     5     119
+#>   human    1076     0      30
+#>   mouse       0  1721     258
+#>   suspect   867     0     247
 
 # specifically, do we label all the human and mouse cells confidently?
 with(barnyardtibble, table(mixlabel, label))[, c("human", "mouse")]
 #>          label
 #> mixlabel  human mouse
-#>   human    1925     0
-#>   mouse       0  1716
-#>   suspect    18     5
+#>   human    1076     0
+#>   mouse       0  1721
+#>   suspect   867     0
 ```
 
 How did we do? 
@@ -949,10 +949,11 @@ names(subsamples) <- paste0("run", seq_along(subsamples))
 # purrr::map maps a function over a list
 library(purrr)
 
-# evaluate performance across 100 bootstrap samples of 100 cells per method
+# evaluate performance with 200 bootstrap samples of (ideally) 200 cells/method
+# (i.e. subsamples <- replicate(n=200, sample_umis(..., ideal=200, ...)), above)
 runs <- purrr::map(subsamples, performance_by_method, atibble=barnyardtibble)
 
-# for plotting, stack them
+# for plotting, stack them row-by-row
 results <- bind_rows(runs) 
 ```
 
