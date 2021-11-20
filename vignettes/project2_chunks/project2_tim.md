@@ -36,7 +36,7 @@ data structures kind of suck. (No, seriously, you'll find out why eventually.)
 The package is, not coincidentally, called [tidySingleCellExperiment](http://www.bioconductor.org/packages/release/bioc/vignettes/tidySingleCellExperiment/inst/doc/introduction.html):
 
 <details>
-  <summary>Click for details</summary>
+  <summary>Make sure necessary packages are installed</summary>
 
 ```r
 
@@ -55,18 +55,16 @@ if (!require("tidyverse")) {
 ```
 </details>
 
-# Tim's stab at classification and plotting 
-
-It will be difficult to evaluate our strategy if we don't first load the data:
-
 <details>
-  <summary>Click for details</summary>
+  <summary>Load necessary packages</summary>
 
 ```r
 library(SingleCellExperiment) 
 library(tidySingleCellExperiment)
 ```
 </details>
+
+It will be challenging to draw conclusions without first loading the data.
 
 
 ```r
@@ -75,6 +73,26 @@ if (!exists("tidybarnyard")) {
   tidybarnyard <- readRDS(url("https://ttriche.github.io/RDS/tidybarnyard.rds"))
 }
 ```
+
+The _[tidySingleCellExperiment](http://www.bioconductor.org/packages/release/bioc/vignettes/tidySingleCellExperiment/inst/doc/introduction.html)_ package gives
+us some tools to stay in the Tidyverse as much as possible while working with
+single-cell data. (It turns out that the underlying data makes this somewhat 
+less trivial than you might expect. Fortunately, you don't have to care.) 
+
+There is a [little annoyance in _tidySingleCellExperiment_](https://github.com/stemangiola/tidySingleCellExperiment/issues/38) that we need to side-step to move along. Just to be sure, let's fix this and make sure we don't hit it later on:
+
+
+```r
+
+# if any column in `tidybarnyard` column data is named `cell`, rename it 
+# this is currently a bug in tidySingleCellExperiment:
+# https://github.com/stemangiola/tidySingleCellExperiment/issues/38
+#
+names(colData(tidybarnyard)) <- sub("cell",                       # pattern
+                                    "barcode",                    # replacement
+                                    names(colData(tidybarnyard))) # strings 
+```
+# Tim's stab at classification and plotting 
 
 It will be useful to know that, when you use the `$` operator on a typical 
 Bioconductor object (such as a _tidySingleCellExperiment_ like ours), it assumes
@@ -98,24 +116,6 @@ feature-specific details lined up with rows, tends to stay in style. The only
 annoying feature (ha!) with this setup is that you need to explicitly tell R 
 when you want data about the rows themselves (i.e., the rowData). 
 
-The _[tidySingleCellExperiment](http://www.bioconductor.org/packages/release/bioc/vignettes/tidySingleCellExperiment/inst/doc/introduction.html)_ package gives
-us some tools to stay in the Tidyverse as much as possible while working with
-single-cell data. (It turns out that the underlying data makes this somewhat 
-less trivial than you might expect. Fortunately, you don't have to care.) 
-
-There is a [little annoyance in _tidySingleCellExperiment_](https://github.com/stemangiola/tidySingleCellExperiment/issues/38) that we need to side-step to move along. Just to be sure, let's fix this and make sure we don't hit it later on:
-
-
-```r
-
-# if any column in `tidybarnyard` column data is named `cell`, rename it 
-# this is currently a bug in tidySingleCellExperiment:
-# https://github.com/stemangiola/tidySingleCellExperiment/issues/38
-#
-names(colData(tidybarnyard)) <- sub("cell",                       # pattern
-                                    "barcode",                    # replacement
-                                    names(colData(tidybarnyard))) # strings 
-```
 
 Now, let's see how these moving parts in the figure fit together, from the
 ground up.  We will make use of the `dim` function, which provides dimensions
@@ -182,7 +182,7 @@ as_tibble(tidybarnyard) %>%           # "turn the colData into a tibble"
 
 # your cell:
 show(aCell) 
-#> [1] "Mixture2.inDrops.CTGAGCGT-AGAATGCG-CCTACTAG"
+#> [1] "Mixture2.inDrops.GTGCCCAT-AGAATGCG-CGTATCGG"
 
 # does that mean we can ask for a random gene with certain attributes?
 as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
@@ -192,7 +192,7 @@ as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
 
 # your gene:
 show(aGene) 
-#> [1] "mm10_ENSMUSG00000045268_mm10_Zfp691"
+#> [1] "mm10_ENSMUSG00000107705_mm10_Umad1"
 
 # how many copies of this random gene were found in this random cell? 
 counts(tidybarnyard)[aGene, aCell] 
@@ -222,7 +222,7 @@ samples <- (length(aHundredCells) * length(aHundredGenes))
 nonzero <- nnzero(counts(tidybarnyard)[aHundredGenes, aHundredCells])
 sparsity_hat <- (samples - nonzero) / samples 
 sparsity_hat # estimated sparsity
-#> [1] 0.9225
+#> [1] 0.9112
 
 # In fact, we can use this scheme to look at sampling error:
 sample_sparsity <- function(object, cells=100, genes=100) { 
@@ -585,7 +585,7 @@ mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]),
 table(mfit$classification) # it turns out that we end up with less human cells
 #> 
 #>    1    2    3 
-#> 1941 2116  142
+#> 1941  142 2116
 barnyardtibble$mclass <- factor(mfit$classification)
 
 # plot the results
