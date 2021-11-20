@@ -2,7 +2,7 @@
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 library(devtools)
-load_all("./")
+#load_all("./")
 
 
 ## ---- tidysinglecell----------------------------------------------------------
@@ -14,6 +14,10 @@ if (!require("SingleCellExperiment")) {
 if (!require("tidySingleCellExperiment")) {
   BiocManager::install("tidySingleCellExperiment")
   library(tidySingleCellExperiment)
+}
+if (!require("tidyverse")) {
+  BiocManager::install("tidyverse")
+  library(tidyverse)
 }
 
 
@@ -320,6 +324,11 @@ library(mclust)
 
 
 ## ---- mixtureModel------------------------------------------------------------
+
+# `logit` is from the `gtools` package:
+library(gtools) 
+# Note to self: always compile vignettes in a fresh session with R --vanilla :-/
+
 # since these are proportional values, it makes sense to transform them: 
 mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]), 
                verbose=FALSE, G=1:3) # verbose=FALSE to avoid progress bar!
@@ -409,9 +418,8 @@ coefplot(fitm3, trans=invlogit) + theme_minimal()
 ## ---- sample_umis-------------------------------------------------------------
 
 # adapted from a SingleCellExperiment-centric method for CITEseq
-sample_umis <- function(umis, meta, block, ideal=300) {
+sample_umis <- function(umis, meta, block, ideal=300, verbose=TRUE, justnames=FALSE) {
 
-  # {{{
   stopifnot(nrow(meta) == ncol(umis))
   stopifnot(length(block) == nrow(meta))
 
@@ -425,20 +433,138 @@ sample_umis <- function(umis, meta, block, ideal=300) {
     if (cells <= ideal) {
       pct <- 100
       keep <- c(keep, sset)
-      message("Kept ", cells, " cells (", pct, "%) of type ", set, ".")
+      if (verbose) message("Kept ",cells," cells (",pct,"%) of type ",set,".")
     } else {
       kept <- sample(sset, size=ideal)
       pct <- round((ideal / cells) * 100)
       keep <- c(keep, kept)
-      message("Kept ", ideal, " cells (", pct, "%) of type ", set, ".")
+      if (verbose) message("Kept ",ideal," cells (",pct,"%) of type ",set,".")
     }
   }
 
   pct <- round((length(keep) / ncol(umis)) * 100, 1)
-  message("Kept ", length(keep), " (", pct, "%) of ", ncol(umis),
-          " cells in ", length(samplesets), " blocks.")
-  umis[, keep]
-  # }}}
+  if (verbose) {
+    message("Kept ", length(keep), " (", pct, "%) of ", ncol(umis),
+            " cells in ", length(samplesets), " blocks.")
+  }
+
+  if (justnames) return(keep)
+  else return(umis[, keep])
 
 }
+
+
+## ---- resampletidysce---------------------------------------------------------
+
+# simple classifier: is it suspect? then it's a failure
+performance_by_method <- function(subsample, atibble) {
+ 
+  subs <- mutate(slice(atibble, subsample), # i.e., tbl %>% slice %>% mutate
+                 result=if_else(mixlabel == "suspect", "failure", "success"))
+  tbl <- table(select(subs, method, result)) # force of habit
+  probs <- as(sweep(tbl, 1, rowSums(tbl), `/`), "matrix")
+  rownames(probs) <- NULL # avoid hassles when stacking
+  tibble(cbind(method=rownames(tbl), data.frame(probs)))
+
+}
+
+# a simple bootstrap (for efficiency, we don't bother grabbing the UMIs at all)
+# per the above (and to make computing intervals easier), we'll use 200x200 
+subsamples <- replicate(n=200, simplify=FALSE, # to make it easier to iterate
+                        sample_umis(tidybarnyard, as_tibble(tidybarnyard), 
+                                    tidybarnyard$method, ideal=200, 
+                                    justnames=TRUE, verbose=FALSE))
+names(subsamples) <- paste0("run", seq_along(subsamples))
+
+# purrr::map maps a function over a list
+library(purrr)
+
+# evaluate performance across 100 bootstrap samples of 100 cells per method
+runs <- purrr::map(subsamples, performance_by_method, atibble=barnyardtibble)
+
+# for plotting, stack them
+results <- bind_rows(runs) 
+
+
+
+## ---- sinaplot----------------------------------------------------------------
+
+# fire up geom_sina because it rules:
+library(ggforce)
+
+# for better resolution, you could resample batches of 500, 1000, ... 
+results %>% 
+#  mutate(method = fct_reorder(method, desc(success), .fun='median')) %>% 
+  ggplot(aes(method, success, color=method)) + 
+            scale_y_continuous(labels = scales::label_percent()) + 
+            ylab("classification performance") +
+            geom_sina(show.legend=FALSE) + 
+            coord_flip() + 
+            theme_minimal() + 
+            ggtitle("Cell classification results by prep, 200 cells apiece")
+
+
+
+## ---- confidenceintervals-----------------------------------------------------
+
+# ground rules
+CI <- 0.95                                      # must be between 0 and 1 
+lower <- (1 - CI) / 2                           # defined by the value of CI
+upper <- 1 - lower                              # defined by the value of lower
+middle <- (lower + upper) / 2                   # this is a tautology and a test
+plot_title <- paste0(CI * 100, "% empirical confidence intervals, resampled")
+
+# grouping
+results %>% 
+  group_by(method) %>%                          # create a grouped data frame
+  summarize(lower=quantile(success, lower),     # lower limit of the CI
+            middle=quantile(success, middle),   # middle (== median)
+            upper=quantile(success, upper)) ->  # upper limit of the CI
+    CIs                                         # assign to a new tibble, "CIs"
+
+# reorder to plot
+library(forcats) 
+CIs %>% 
+  mutate(method = fct_reorder(method, desc(middle))) %>% 
+  ggplot(aes(x=method, ymin=lower, y=middle, ymax=upper, color=method)) + 
+  scale_y_continuous(labels = scales::label_percent()) + 
+  geom_pointrange(show.legend=FALSE) + 
+  ylab("Classification success") + 
+  coord_flip() + 
+  theme_minimal() + 
+  ggtitle(plot_title)
+
+
+
+## ---- competitive-------------------------------------------------------------
+
+# assign 1 point to the winner, 0 otherwise
+# in the case of ties, split the point N ways
+score_methods <- function(run) {
+
+  top <- max(run$success)
+  run$points <- as.numeric(run$success == top)
+  score <- run$points / sum(run$points)
+  names(score) <- run$method
+  return(score)
+
+}
+
+# tally up the scores
+runs %>% 
+  purrr::map(score_methods) %>%  # map the function score_methods onto each run
+  bind_rows() %>%                # bind the results as rows of a tibble 
+  colSums -> scores              # compute the column sums and assign to scores
+
+# tibble-ify for plotting 
+outcome <- tibble(method=names(scores), 
+                  score=scores,
+                  scheme="unblocked") 
+
+# plot it 
+outcome %>% ggplot(aes(x=scheme, y=score, fill=method)) + 
+            geom_col(position="fill") + 
+            theme_minimal() + 
+            ggtitle("Winning method, by resampling scheme")
+
 

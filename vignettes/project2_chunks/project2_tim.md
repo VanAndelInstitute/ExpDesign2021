@@ -44,10 +44,112 @@ if (!require("SingleCellExperiment")) {
   BiocManager::install("SingleCellExperiment")
   library(SingleCellExperiment)
 }
+#> Loading required package: SingleCellExperiment
+#> Loading required package: SummarizedExperiment
+#> Loading required package: MatrixGenerics
+#> Loading required package: matrixStats
+#> 
+#> Attaching package: 'MatrixGenerics'
+#> The following objects are masked from 'package:matrixStats':
+#> 
+#>     colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+#>     colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+#>     colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+#>     colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+#>     colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+#>     colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+#>     colWeightedMeans, colWeightedMedians, colWeightedSds,
+#>     colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+#>     rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+#>     rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+#>     rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+#>     rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+#>     rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+#>     rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+#>     rowWeightedSds, rowWeightedVars
+#> Loading required package: GenomicRanges
+#> Loading required package: stats4
+#> Loading required package: BiocGenerics
+#> 
+#> Attaching package: 'BiocGenerics'
+#> The following objects are masked from 'package:stats':
+#> 
+#>     IQR, mad, sd, var, xtabs
+#> The following objects are masked from 'package:base':
+#> 
+#>     anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+#>     dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+#>     grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+#>     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+#>     rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+#>     union, unique, unsplit, which.max, which.min
+#> Loading required package: S4Vectors
+#> 
+#> Attaching package: 'S4Vectors'
+#> The following objects are masked from 'package:base':
+#> 
+#>     expand.grid, I, unname
+#> Loading required package: IRanges
+#> Loading required package: GenomeInfoDb
+#> Loading required package: Biobase
+#> Welcome to Bioconductor
+#> 
+#>     Vignettes contain introductory material; view with
+#>     'browseVignettes()'. To cite Bioconductor, see
+#>     'citation("Biobase")', and for packages 'citation("pkgname")'.
+#> 
+#> Attaching package: 'Biobase'
+#> The following object is masked from 'package:MatrixGenerics':
+#> 
+#>     rowMedians
+#> The following objects are masked from 'package:matrixStats':
+#> 
+#>     anyMissing, rowMedians
 if (!require("tidySingleCellExperiment")) {
   BiocManager::install("tidySingleCellExperiment")
   library(tidySingleCellExperiment)
 }
+#> Loading required package: tidySingleCellExperiment
+#> 
+#> Attaching package: 'tidySingleCellExperiment'
+#> The following object is masked from 'package:IRanges':
+#> 
+#>     slice
+#> The following object is masked from 'package:S4Vectors':
+#> 
+#>     rename
+#> The following object is masked from 'package:matrixStats':
+#> 
+#>     count
+#> The following object is masked from 'package:stats':
+#> 
+#>     filter
+if (!require("tidyverse")) {
+  BiocManager::install("tidyverse")
+  library(tidyverse)
+}
+#> Loading required package: tidyverse
+#> ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+#> ✔ ggplot2 3.3.5     ✔ purrr   0.3.4
+#> ✔ tibble  3.1.6     ✔ dplyr   1.0.7
+#> ✔ tidyr   1.1.4     ✔ stringr 1.4.0
+#> ✔ readr   2.1.0     ✔ forcats 0.5.1
+#> ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+#> ✖ dplyr::add_count()  masks tidySingleCellExperiment::add_count()
+#> ✖ dplyr::bind_cols()  masks tidySingleCellExperiment::bind_cols()
+#> ✖ dplyr::bind_rows()  masks tidySingleCellExperiment::bind_rows()
+#> ✖ dplyr::collapse()   masks IRanges::collapse()
+#> ✖ dplyr::combine()    masks Biobase::combine(), BiocGenerics::combine()
+#> ✖ dplyr::count()      masks tidySingleCellExperiment::count(), matrixStats::count()
+#> ✖ dplyr::desc()       masks IRanges::desc()
+#> ✖ tidyr::expand()     masks S4Vectors::expand()
+#> ✖ dplyr::filter()     masks tidySingleCellExperiment::filter(), stats::filter()
+#> ✖ dplyr::first()      masks S4Vectors::first()
+#> ✖ dplyr::lag()        masks stats::lag()
+#> ✖ ggplot2::Position() masks BiocGenerics::Position(), base::Position()
+#> ✖ purrr::reduce()     masks GenomicRanges::reduce(), IRanges::reduce()
+#> ✖ dplyr::rename()     masks tidySingleCellExperiment::rename(), S4Vectors::rename()
+#> ✖ dplyr::slice()      masks tidySingleCellExperiment::slice(), IRanges::slice()
 ```
 </details>
 
@@ -108,10 +210,10 @@ a little easier to keep track of what's going on when we subset either one.
 
 # as what is our object masquerading?
 show(tidybarnyard[,0]) # "just show me information about it, with 0 cells"
-#> # A SingleCellExperiment-tibble abstraction: 0 × 7
+#> # A SingleCellExperiment-tibble abstraction: 0 × 5
 #> [90m# Features=62046 | Assays=counts[39m
-#> # … with 7 variables: cell <chr>, name <chr>, experiment <chr>, method <chr>,
-#> #   barcode <chr>, fracmouse <dbl>, frachuman <dbl>
+#> # … with 5 variables: cell <chr>, name <chr>, experiment <chr>, method <chr>,
+#> #   barcode <chr>
 
 # how many rows (genes) and columns (cells) are there in our tidy barnyard?
 dim(tidybarnyard)
@@ -163,7 +265,7 @@ as_tibble(tidybarnyard) %>%           # "turn the colData into a tibble"
 
 # your cell:
 show(aCell) 
-#> [1] "Mixture2.inDrops.GGGAGATG-AAGAGCGT-AACCCTTG"
+#> [1] "Mixture1.inDrops.ATGCGGAG-TATCCTCT-GATTTACC"
 
 # does that mean we can ask for a random gene with certain attributes?
 as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
@@ -173,7 +275,7 @@ as_tibble(rowData(tidybarnyard)) %>%  # "turn the rowData into a tibble"
 
 # your gene:
 show(aGene) 
-#> [1] "mm10_ENSMUSG00000027624_mm10_Epb41l1"
+#> [1] "mm10_ENSMUSG00000095493_mm10_A630023A22Rik"
 
 # how many copies of this random gene were found in this random cell? 
 counts(tidybarnyard)[aGene, aCell] 
@@ -181,6 +283,14 @@ counts(tidybarnyard)[aGene, aCell]
 
 # note that the odds are good that you'll get a 0 for this random combination:
 library(Matrix)                                 # for the `nnzero` function 
+#> 
+#> Attaching package: 'Matrix'
+#> The following objects are masked from 'package:tidyr':
+#> 
+#>     expand, pack, unpack
+#> The following object is masked from 'package:S4Vectors':
+#> 
+#>     expand
 sparsity <- 1 - (nnzero(counts(tidybarnyard)) / # number of nonzero counts
                  prod(dim(tidybarnyard)))       # number of rows * columns 
 
@@ -203,7 +313,7 @@ samples <- (length(aHundredCells) * length(aHundredGenes))
 nonzero <- nnzero(counts(tidybarnyard)[aHundredGenes, aHundredCells])
 sparsity_hat <- (samples - nonzero) / samples 
 sparsity_hat # estimated sparsity
-#> [1] 0.9278
+#> [1] 0.9239
 
 # In fact, we can use this scheme to look at sampling error:
 sample_sparsity <- function(object, cells=100, genes=100) { 
@@ -467,6 +577,19 @@ library(coefplot)
 
 # classifiable ~ method
 coefplot(fit1, trans=invlogit) + theme_minimal() 
+#> Warning: `funs()` was deprecated in dplyr 0.8.0.
+#> Please use a list of either functions or lambdas: 
+#> 
+#>   # Simple named list: 
+#>   list(mean = mean, median = median)
+#> 
+#>   # Auto named with `tibble::lst()`: 
+#>   tibble::lst(mean, median)
+#> 
+#>   # Using lambdas
+#>   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 #> Warning: It is deprecated to specify `guide = FALSE` to remove a guide. Please
 #> use `guide = "none"` instead.
 
@@ -546,11 +669,27 @@ automatic gating of actual flow cytometry data this way, in fact, and it works
 # fits a Gaussian mixture model with arbitrary covariance structure and uses 
 # a Bayesian penalization scheme to choose how many components exist in the mix
 library(mclust)
+#>     __  ___________    __  _____________
+#>    /  |/  / ____/ /   / / / / ___/_  __/
+#>   / /|_/ / /   / /   / / / /\__ \ / /   
+#>  / /  / / /___/ /___/ /_/ /___/ // /    
+#> /_/  /_/\____/_____/\____//____//_/    version 5.4.8
+#> Type 'citation("mclust")' for citing this R package in publications.
+#> 
+#> Attaching package: 'mclust'
+#> The following object is masked from 'package:purrr':
+#> 
+#>     map
 ```
 </details>
 
 
 ```r
+
+# `logit` is from the `gtools` package:
+library(gtools) 
+# Note to self: always compile vignettes in a fresh session with R --vanilla :-/
+
 # since these are proportional values, it makes sense to transform them: 
 mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]), 
                verbose=FALSE, G=1:3) # verbose=FALSE to avoid progress bar!
@@ -561,7 +700,7 @@ mfit <- Mclust(logit(barnyardtibble[, c("fracmouse","frachuman")]),
 table(mfit$classification) # it turns out that we end up with less human cells
 #> 
 #>    1    2    3 
-#>  142 1941 2116
+#> 2124 1941  134
 barnyardtibble$mclass <- factor(mfit$classification)
 
 # plot the results
@@ -601,17 +740,17 @@ barnyardtibble %>%
 with(barnyardtibble, table(mixlabel, label))
 #>          label
 #> mixlabel  human mouse suspect
-#>   human    1925     0     191
+#>   human    1927     0     197
 #>   mouse       0  1716     225
-#>   suspect    18     5     119
+#>   suspect    16     5     113
 
 # specifically, do we label all the human and mouse cells confidently?
 with(barnyardtibble, table(mixlabel, label))[, c("human", "mouse")]
 #>          label
 #> mixlabel  human mouse
-#>   human    1925     0
+#>   human    1927     0
 #>   mouse       0  1716
-#>   suspect    18     5
+#>   suspect    16     5
 ```
 
 How did we do? 
@@ -718,9 +857,8 @@ You could always adjust the `ideal` argument to the function below to resample:
 ```r
 
 # adapted from a SingleCellExperiment-centric method for CITEseq
-sample_umis <- function(umis, meta, block, ideal=300) {
+sample_umis <- function(umis, meta, block, ideal=300, verbose=TRUE, justnames=FALSE) {
 
-  # {{{
   stopifnot(nrow(meta) == ncol(umis))
   stopifnot(length(block) == nrow(meta))
 
@@ -734,22 +872,255 @@ sample_umis <- function(umis, meta, block, ideal=300) {
     if (cells <= ideal) {
       pct <- 100
       keep <- c(keep, sset)
-      message("Kept ", cells, " cells (", pct, "%) of type ", set, ".")
+      if (verbose) message("Kept ",cells," cells (",pct,"%) of type ",set,".")
     } else {
       kept <- sample(sset, size=ideal)
       pct <- round((ideal / cells) * 100)
       keep <- c(keep, kept)
-      message("Kept ", ideal, " cells (", pct, "%) of type ", set, ".")
+      if (verbose) message("Kept ",ideal," cells (",pct,"%) of type ",set,".")
     }
   }
 
   pct <- round((length(keep) / ncol(umis)) * 100, 1)
-  message("Kept ", length(keep), " (", pct, "%) of ", ncol(umis),
-          " cells in ", length(samplesets), " blocks.")
-  umis[, keep]
-  # }}}
+  if (verbose) {
+    message("Kept ", length(keep), " (", pct, "%) of ", ncol(umis),
+            " cells in ", length(samplesets), " blocks.")
+  }
+
+  if (justnames) return(keep)
+  else return(umis[, keep])
 
 }
 ```
 </details> 
 
+Let's suppose we decided that we didn't care which mixture the cells came from,
+and we just wanted to calibrate our coefficient estimates for each prep method.
+Recall the `replicate` loop earlier for estimating sparsity. If we take, say, 
+200 samples of 200 cells per method, what do our estimates (i.e., no intercept,
+purely marginal) look like? The function above works just fine on a tidysce, and
+since we are not fitting an intercept, we can perform a simplified version of 
+logistic regression simply by computing marginals.
+
+
+```r
+
+# simple classifier: is it suspect? then it's a failure
+performance_by_method <- function(subsample, atibble) {
+ 
+  subs <- mutate(slice(atibble, subsample), # i.e., tbl %>% slice %>% mutate
+                 result=if_else(mixlabel == "suspect", "failure", "success"))
+  tbl <- table(select(subs, method, result)) # force of habit
+  probs <- as(sweep(tbl, 1, rowSums(tbl), `/`), "matrix")
+  rownames(probs) <- NULL # avoid hassles when stacking
+  tibble(cbind(method=rownames(tbl), data.frame(probs)))
+
+}
+
+# a simple bootstrap (for efficiency, we don't bother grabbing the UMIs at all)
+# per the above (and to make computing intervals easier), we'll use 200x200 
+subsamples <- replicate(n=200, simplify=FALSE, # to make it easier to iterate
+                        sample_umis(tidybarnyard, as_tibble(tidybarnyard), 
+                                    tidybarnyard$method, ideal=200, 
+                                    justnames=TRUE, verbose=FALSE))
+names(subsamples) <- paste0("run", seq_along(subsamples))
+
+# purrr::map maps a function over a list
+library(purrr)
+
+# evaluate performance across 100 bootstrap samples of 100 cells per method
+runs <- purrr::map(subsamples, performance_by_method, atibble=barnyardtibble)
+
+# for plotting, stack them
+results <- bind_rows(runs) 
+```
+
+Per usual, it helps to plot the results.
+
+
+```r
+
+# fire up geom_sina because it rules:
+library(ggforce)
+
+# for better resolution, you could resample batches of 500, 1000, ... 
+results %>% 
+#  mutate(method = fct_reorder(method, desc(success), .fun='median')) %>% 
+  ggplot(aes(method, success, color=method)) + 
+            scale_y_continuous(labels = scales::label_percent()) + 
+            ylab("classification performance") +
+            geom_sina(show.legend=FALSE) + 
+            coord_flip() + 
+            theme_minimal() + 
+            ggtitle("Cell classification results by prep, 200 cells apiece")
+```
+
+![plot of chunk sinaplot](figure/sinaplot-1.png)
+
+_Question:_ I commented out a line in the plot above. Would it make it clearer?
+
+You might conclude that we could directly compute confidence intervals from the 
+above results. You would be correct. Let's do this in a tidy-ish fashion:
+
+
+```r
+
+# ground rules
+CI <- 0.95                                      # must be between 0 and 1 
+lower <- (1 - CI) / 2                           # defined by the value of CI
+upper <- 1 - lower                              # defined by the value of lower
+middle <- (lower + upper) / 2                   # this is a tautology and a test
+plot_title <- paste0(CI * 100, "% empirical confidence intervals, resampled")
+
+# grouping
+results %>% 
+  group_by(method) %>%                          # create a grouped data frame
+  summarize(lower=quantile(success, lower),     # lower limit of the CI
+            middle=quantile(success, middle),   # middle (== median)
+            upper=quantile(success, upper)) ->  # upper limit of the CI
+    CIs                                         # assign to a new tibble, "CIs"
+
+# reorder to plot
+library(forcats) 
+CIs %>% 
+  mutate(method = fct_reorder(method, desc(middle))) %>% 
+  ggplot(aes(x=method, ymin=lower, y=middle, ymax=upper, color=method)) + 
+  scale_y_continuous(labels = scales::label_percent()) + 
+  geom_pointrange(show.legend=FALSE) + 
+  ylab("Classification success") + 
+  coord_flip() + 
+  theme_minimal() + 
+  ggtitle(plot_title)
+```
+
+![plot of chunk confidenceintervals](figure/confidenceintervals-1.png)
+
+_Question (not required)_: Can you overlay the two summaries above? (I can't.)
+
+_Question (not required)_: Is this also feasible for each combination of 
+(mixture, method)? If so, how would you structure your resampling scheme?
+
+Perhaps you've previously been told that it is not possible to exclude the 
+possibility that two groups (or groups of samples) are equivalent at the 5% 
+alpha level if their 95% confidence intervals overlap. This is in fact the case,
+since inverting a test at a given alpha is equivalent to computing a (1-alpha)%
+confidence interval. Congratulations, you just computed all marginal comparisons
+for these methods at a significance level of 0.05. 
+
+_Question:_ What happens if you take bigger samples, or more of them?
+
+Suppose we went back to the original dataset (or, for the sake of argument, a 
+larger dataset) and resampled the hell out of it. At some point, do you suppose
+you could choose a single "best" library prep method with 95% confidence (i.e.,
+a family-wise error rate of 0.05, or 5%)?  This is roughly equivalent to a Holm
+(or, if you can't count, Bonferroni) correction a the same alpha level. 
+
+_Question:_ Did you have to make any assumptions to do this? Which ones? 
+
+If you think this is a discussion about statistical power and significance, 
+you're right.  If you think that resampling is always the answer...
+
+_Question:_ Is there a limit to how tight your intervals can be from resampling?
+
+(Hint: Yes. Consider the number of possible unique outcomes and permutations. 
+Note that if we want exact CIs, we need to avoid double-counting the results.)
+
+_Question:_ Can you come up with a resampling based scheme that is exhaustive, 
+i.e., it samples every possible permutation of draws from the data, no more, no
+less? Does this scheme change if you block on multiple variables or groupings?
+
+(Hint: Look up "leave-one-out cross-validation".)
+
+
+# Tests and other impedimentia 
+
+You can also ask more interesting questions, like how many times a given method 
+ends up with the best performance out of the lot in each sampling run. This is 
+perhaps a better representation of what to expect if you applied a prep, or a 
+labeling scheme, or a test across multiple smaller experiments. Like, say, if 
+your instructor asked you to determine a sample size at which you had an 80% 
+chance of successfully discriminating some rare cell type from others, and oh
+by the way, you need to choose between protocols that cost different amounts 
+per cell. And perhaps you wanted a way to look at different classifiers as well
+as different prep or sort methods for your Extremely Important Rare Cell Type.
+Because as you can probably guess from the above, you're not limited to just 
+comparing methods, or even using the same sample size per block, to do this. 
+
+
+```r
+
+# assign 1 point to the winner, 0 otherwise
+# in the case of ties, split the point N ways
+score_methods <- function(run) {
+
+  top <- max(run$success)
+  run$points <- as.numeric(run$success == top)
+  score <- run$points / sum(run$points)
+  names(score) <- run$method
+  return(score)
+
+}
+
+# tally up the scores
+runs %>% 
+  purrr::map(score_methods) %>%  # map the function score_methods onto each run
+  bind_rows() %>%                # bind the results as rows of a tibble 
+  colSums -> scores              # compute the column sums and assign to scores
+
+# tibble-ify for plotting 
+outcome <- tibble(method=names(scores), 
+                  score=scores,
+                  scheme="unblocked") 
+
+# plot it 
+outcome %>% ggplot(aes(x=scheme, y=score, fill=method)) + 
+            geom_col(position="fill") + 
+            theme_minimal() + 
+            ggtitle("Winning method, by resampling scheme")
+```
+
+![plot of chunk competitive](figure/competitive-1.png)
+
+So that's why I left the resampling in.  Because it is in fact the state of the
+art for single-cell experimental design evaluation in the context of power and 
+efficiency. (You want the best balance of false positives and false negatives 
+possible for your experiment, and can choose whatever tools you wish to achieve
+that balance; this is the point of a well executed experimental design.)  You 
+will note that nowhere in the above resampling schemes have we assumed much of 
+anything other than that a mixture model is usually optimal for cell labeling
+(because it is, in the general case; though you should feel free to investigate 
+whether something else might work better for any specific experiment of yours). 
+
+# Philosophical bloviation 
+
+You might begin to think that experimental design is about navigating tradeoffs.
+One tradeoff that most people (including myself) are rarely equipped to navigate
+by intuition is what test or method to use. So don't: let the data tell you. And
+absolutely do include some positive and negative controls in your experiments, 
+whether they are _in vitro_, _in vivo_, or _in silico_. This is particularly 
+important when evaluating new and/or fashionable techniques: 
+
+[The state of the art in single-cell batch correction benchmarking](https://www.biorxiv.org/content/10.1101/2021.11.15.468733v1.full)
+
+_Question:_ Can you think of a way to include some negative controls in this 
+experiment? We know that there are empty droplets in many methods, and we know
+that doublets are not uncommon in droplet-based methods. Suppose you had access
+to an independent label or labels on each cell, as you might find in a 
+[CITE-seq experiment](https://www.nature.com/articles/s41592-020-01050-x/figures/1). If you haven't bumped into one before, here's roughly how it works:
+
+![a CITE-seq experiment](figure/CITEseq.png) 
+
+Specifically, suppose you coded up the human and mouse cells (or the cell types
+you actually cared about) with batch (HTO, hash-tag oligo) labels, like in the 
+'S' column of the matrix above.  (Think of it as a great big tibble, and think
+of the pieces of the big matrix as alternative assays.)  Further, the protein 
+tags would help quite a bit if you think there really are expressed differences
+within the usual cell subtypes (perhaps the ones you labeled with the hashtags).
+
+_Question_: Now can you think of a way to devise positive and negative controls
+that doesn't depend upon consensus or what anyone else thinks? 
+
+Congratulations, now you're even a little beyond the state of the published art.
+Apologies if Scott or I gave you the impression that [most published research is
+false](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124). That might be discouraging, and we wouldn't want to suggest that there 
+is [anything wrong with academic research](https://royalsocietypublishing.org/doi/10.1098/rsos.160384)!
