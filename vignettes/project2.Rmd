@@ -110,7 +110,7 @@ library(tidyverse)
 tibble(name = cells) %>% # stringr::str_split takes strings and a split pattern
   mutate(experiment = str_split(name, "\\.", simplify=TRUE)[,1]) %>% # column 1
   mutate(method = str_split(name, "\\.", simplify=TRUE)[,2]) %>% # column 2 
-  mutate(cell = str_split(name, "\\.", simplify=TRUE)[,3]) -> # column 3
+  mutate(barcode = str_split(name, "\\.", simplify=TRUE)[,3]) -> # column 3
     celltibble # the result is assigned to the object `celltibble`
 
 # how many cells per mixture were run with each method?
@@ -328,7 +328,7 @@ if (FALSE) { # if you want to recreate the SingleCellExperiment:
 }
 
 # if you just want to load it 
-tidybarnyard <- tidy(readRDS(url("https://ttriche.github.io/RDS/barnyard.rds")))
+tidybarnyard <- readRDS(url("https://ttriche.github.io/RDS/tidybarnyard.rds"))
 show(tidybarnyard)
 
 ```

@@ -11,8 +11,8 @@ Description: For the practical sessions in Experimental Design & Biostats 2021,
              Rstudio to \url{https://rpubs.com/}, so all that's left is to make
              sure that dependencies for assignments are in place. This package
              also includes a few convenience functions (phelp, lsos, etc.).
-Version: 0.11.15
-Date: 2021-11-15
+Version: 0.11.20
+Date: 2021-11-20
 Authors@R: person("Triche", "Lab", role=c("aut", "cre"), email="trichelab@gmail.com")
 Author: Triche Lab [aut, cre]
 Maintainer: Triche Lab <trichelab@gmail.com>
@@ -23,6 +23,7 @@ Depends:
     R (>= 4.0.0),
     conflicted,
     ggforce,
+    gtools,
     googlesheets4,
     moderndive,
     tidyverse,
@@ -31,6 +32,7 @@ Imports:
     BiocManager,
     broom,
     broom.mixed,
+    coefplot,
     corrr,
     datasets,
     devtools,
@@ -38,6 +40,7 @@ Imports:
     downlit,
     dplyr,
     factoextra,
+    forcats, 
     ggforce,
     ggplot2,
     ggthemes,
@@ -67,11 +70,15 @@ Imports:
     rpart,
     rpart.plot,
     rsample,
+    scater,
     scico,
+    SingleCellExperiment,
     skeletor,
     skimr,
+    SummarizedExperiment,
     tibble,
     tidyr,
+    tidySingleCellExperiment,
     tidytext,
     tidyverse,
     tune, 
